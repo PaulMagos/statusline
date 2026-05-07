@@ -1,5 +1,5 @@
 {
-  "name": "codexstatusline",
+  "name": "@paulmagos/codexstatusline",
   "version": "2.2.12",
   "description": "A status line configurator for Codex CLI",
   "module": "src/codexstatusline.ts",

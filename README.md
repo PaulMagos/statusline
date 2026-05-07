@@ -39,6 +39,21 @@ Unsupported widgets are skipped during install.
 
 ## Usage
 
+Install from npm:
+
+```bash
+npm install -g @paulmagos/codexstatusline
+codexstatusline
+```
+
+Or run without installing:
+
+```bash
+npx @paulmagos/codexstatusline
+```
+
+For local development:
+
 ```bash
 bun install
 bun run start
