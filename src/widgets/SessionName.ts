@@ -10,7 +10,7 @@ import type {
 
 export class SessionNameWidget implements Widget {
     getDefaultColor(): string { return 'cyan'; }
-    getDescription(): string { return 'Shows the session name set via /rename command in Claude Code'; }
+    getDescription(): string { return 'Shows the session name set via /rename command in Codex'; }
     getDisplayName(): string { return 'Session Name'; }
     getCategory(): string { return 'Session'; }
     getEditorDisplay(item: WidgetItem): WidgetEditorDisplay {

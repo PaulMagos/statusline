@@ -47,7 +47,7 @@ describe('getUsageToken dump-keychain behavior', () => {
                 throw new Error('Expected security arguments');
             }
 
-            if (args[0] === 'find-generic-password' && args[2] === 'Claude Code-credentials') {
+            if (args[0] === 'find-generic-password' && args[2] === 'Codex-credentials') {
                 throw new Error('missing exact credential');
             }
 
@@ -58,13 +58,13 @@ describe('getUsageToken dump-keychain behavior', () => {
                     'version: 512',
                     'class: "genp"',
                     'attributes:',
-                    '    "svce"<blob>="Claude Code-credentials-hashed"',
+                    '    "svce"<blob>="Codex-credentials-hashed"',
                     '    "mdat"<timedate>="20240301010101Z"'
                 ].join('\n');
             }
 
-            if (args[0] === 'find-generic-password' && args[2] === 'Claude Code-credentials-hashed') {
-                return JSON.stringify({ claudeAiOauth: { accessToken: 'hashed-token' } });
+            if (args[0] === 'find-generic-password' && args[2] === 'Codex-credentials-hashed') {
+                return JSON.stringify({ codexAiOauth: { accessToken: 'hashed-token' } });
             }
 
             throw new Error(`Unexpected security args: ${args.join(' ')}`);

@@ -4,7 +4,7 @@ import { globSync } from 'tinyglobby';
 
 import type { BlockMetrics } from '../types';
 
-import { getClaudeConfigDir } from './claude-settings';
+import { getCodexConfigDir } from './codex-settings';
 import {
     parseJsonlLine,
     readJsonlLinesSync
@@ -16,13 +16,13 @@ const statSync = fs.statSync;
  * Gets block metrics for the current 5-hour block from JSONL files
  */
 export function getBlockMetrics(): BlockMetrics | null {
-    const claudeDir: string | null = getClaudeConfigDir();
+    const codexDir: string | null = getCodexConfigDir();
 
-    if (!claudeDir)
+    if (!codexDir)
         return null;
 
     try {
-        return findMostRecentBlockStartTime(claudeDir);
+        return findMostRecentBlockStartTime(codexDir);
     } catch {
         return null;
     }

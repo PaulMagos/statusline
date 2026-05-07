@@ -198,7 +198,7 @@ describe('persistence', () => {
         const malicious = '../../../../../../tmp/pwn';
         saveCompactionState(malicious, { count: 1, prevCtxPct: 50 });
 
-        const cacheDir = path.join(testHome, '.cache', 'ccstatusline', 'compaction');
+        const cacheDir = path.join(testHome, '.cache', 'codexstatusline', 'compaction');
         const files = fs.existsSync(cacheDir) ? fs.readdirSync(cacheDir) : [];
         expect(files.length).toBe(1);
         expect(files[0]).toMatch(/^compaction-[a-zA-Z0-9_-]+\.json$/);
@@ -216,7 +216,7 @@ describe('persistence', () => {
 
     it('hashes empty session ID to avoid blank filename leaf', () => {
         saveCompactionState('', { count: 1, prevCtxPct: 10 });
-        const cacheDir = path.join(testHome, '.cache', 'ccstatusline', 'compaction');
+        const cacheDir = path.join(testHome, '.cache', 'codexstatusline', 'compaction');
         const files = fs.readdirSync(cacheDir);
         expect(files.length).toBe(1);
         expect(files[0]).not.toBe('compaction-.json');
@@ -232,7 +232,7 @@ describe('persistence', () => {
 
     it('returns fresh state when cache file has corrupted JSON', () => {
         saveCompactionState('corrupt-test', { count: 5, prevCtxPct: 50 });
-        const cacheDir = path.join(testHome, '.cache', 'ccstatusline', 'compaction');
+        const cacheDir = path.join(testHome, '.cache', 'codexstatusline', 'compaction');
         const cacheFile = path.join(cacheDir, fs.readdirSync(cacheDir)[0] ?? '');
         fs.writeFileSync(cacheFile, '{ this is not valid json');
 
@@ -242,7 +242,7 @@ describe('persistence', () => {
 
     it('returns fresh state when cache file exceeds size cap', () => {
         saveCompactionState('big-test', { count: 5, prevCtxPct: 50 });
-        const cacheDir = path.join(testHome, '.cache', 'ccstatusline', 'compaction');
+        const cacheDir = path.join(testHome, '.cache', 'codexstatusline', 'compaction');
         const cacheFile = path.join(cacheDir, fs.readdirSync(cacheDir)[0] ?? '');
         fs.writeFileSync(cacheFile, 'a'.repeat(8192));
 
@@ -251,7 +251,7 @@ describe('persistence', () => {
     });
 
     it.skipIf(process.platform === 'win32')('returns fresh state when cache path is a symlink', () => {
-        const cacheDir = path.join(testHome, '.cache', 'ccstatusline', 'compaction');
+        const cacheDir = path.join(testHome, '.cache', 'codexstatusline', 'compaction');
         fs.mkdirSync(cacheDir, { recursive: true });
         const realPath = path.join(testHome, 'real.json');
         fs.writeFileSync(realPath, JSON.stringify({ count: 99, prevCtxPct: 50 }));
@@ -267,7 +267,7 @@ describe('persistence', () => {
     });
 
     it('uses zod defaults for missing fields in cache file', () => {
-        const cacheDir = path.join(testHome, '.cache', 'ccstatusline', 'compaction');
+        const cacheDir = path.join(testHome, '.cache', 'codexstatusline', 'compaction');
         fs.mkdirSync(cacheDir, { recursive: true });
         const cacheFile = path.join(cacheDir, 'compaction-partial.json');
         fs.writeFileSync(cacheFile, JSON.stringify({}));
@@ -277,7 +277,7 @@ describe('persistence', () => {
     });
 
     it.skipIf(process.platform === 'win32')('atomic save replaces a planted symlink rather than writing through it', () => {
-        const cacheDir = path.join(testHome, '.cache', 'ccstatusline', 'compaction');
+        const cacheDir = path.join(testHome, '.cache', 'codexstatusline', 'compaction');
         fs.mkdirSync(cacheDir, { recursive: true });
         const sessionId = 'rename-test';
         const targetPath = path.join(cacheDir, `compaction-${sessionId}.json`);

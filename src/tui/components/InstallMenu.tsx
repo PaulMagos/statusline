@@ -5,24 +5,20 @@ import {
 } from 'ink';
 import React from 'react';
 
-import { getClaudeSettingsPath } from '../../utils/claude-settings';
+import { getCodexSettingsPath } from '../../utils/codex-settings';
 
 import { List } from './List';
 
 export interface InstallMenuProps {
-    bunxAvailable: boolean;
     existingStatusLine: string | null;
-    onSelectNpx: () => void;
-    onSelectBunx: () => void;
+    onInstall: () => void;
     onCancel: () => void;
     initialSelection?: number;
 }
 
 export const InstallMenu: React.FC<InstallMenuProps> = ({
-    bunxAvailable,
     existingStatusLine,
-    onSelectNpx,
-    onSelectBunx,
+    onInstall,
     onCancel,
     initialSelection = 0
 }) => {
@@ -34,13 +30,8 @@ export const InstallMenu: React.FC<InstallMenuProps> = ({
 
     function onSelect(value: string) {
         switch (value) {
-            case 'npx':
-                onSelectNpx();
-                break;
-            case 'bunx':
-                if (bunxAvailable) {
-                    onSelectBunx();
-                }
+            case 'install':
+                onInstall();
                 break;
             case 'back':
                 onCancel();
@@ -50,20 +41,14 @@ export const InstallMenu: React.FC<InstallMenuProps> = ({
 
     const listItems = [
         {
-            label: 'npx - Node Package Execute',
-            value: 'npx'
-        },
-        {
-            label: 'bunx - Bun Package Execute',
-            sublabel: bunxAvailable ? undefined : '(not installed)',
-            value: 'bunx',
-            disabled: !bunxAvailable
+            label: 'Write Codex status line',
+            value: 'install'
         }
     ];
 
     return (
         <Box flexDirection='column'>
-            <Text bold>Install ccstatusline to Claude Code</Text>
+            <Text bold>Configure Codex status line</Text>
 
             {existingStatusLine && (
                 <Box marginBottom={1}>
@@ -76,7 +61,7 @@ export const InstallMenu: React.FC<InstallMenuProps> = ({
             )}
 
             <Box>
-                <Text dimColor>Select package manager to use:</Text>
+                <Text dimColor>Map supported widgets to Codex built-in status line items.</Text>
             </Box>
 
             <List
@@ -97,9 +82,9 @@ export const InstallMenu: React.FC<InstallMenuProps> = ({
 
             <Box marginTop={2}>
                 <Text dimColor>
-                    The selected command will be written to
+                    The generated `tui.status_line` array will be written to
                     {' '}
-                    {getClaudeSettingsPath()}
+                    {getCodexSettingsPath()}
                 </Text>
             </Box>
 

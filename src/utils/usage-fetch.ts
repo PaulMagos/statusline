@@ -6,7 +6,7 @@ import * as os from 'os';
 import * as path from 'path';
 import { z } from 'zod';
 
-import { getClaudeConfigDir } from './claude-settings';
+import { getCodexConfigDir } from './codex-settings';
 import type {
     UsageData,
     UsageError
@@ -14,16 +14,16 @@ import type {
 import { UsageErrorSchema } from './usage-types';
 
 // Cache configuration
-const CACHE_DIR = path.join(os.homedir(), '.cache', 'ccstatusline');
+const CACHE_DIR = path.join(os.homedir(), '.cache', 'codexstatusline');
 const CACHE_FILE = path.join(CACHE_DIR, 'usage.json');
 const LOCK_FILE = path.join(CACHE_DIR, 'usage.lock');
 const CACHE_MAX_AGE = 180; // seconds
 const LOCK_MAX_AGE = 30;   // rate limit: only try API once per 30 seconds
 const DEFAULT_RATE_LIMIT_BACKOFF = 300; // seconds
-const MACOS_USAGE_CREDENTIALS_SERVICE = 'Claude Code-credentials';
+const MACOS_USAGE_CREDENTIALS_SERVICE = 'Codex-credentials';
 const MACOS_SECURITY_DUMP_MAX_BUFFER = 8 * 1024 * 1024;
 
-const UsageCredentialsSchema = z.object({ claudeAiOauth: z.object({ accessToken: z.string().nullable().optional() }).optional() });
+const UsageCredentialsSchema = z.object({ codexAiOauth: z.object({ accessToken: z.string().nullable().optional() }).optional() });
 const UsageLockErrorSchema = z.enum(['timeout', 'rate-limited']);
 const UsageLockSchema = z.object({
     blockedUntil: z.number(),
@@ -70,7 +70,7 @@ function parseJsonWithSchema<T>(rawJson: string, schema: z.ZodType<T>): T | null
 
 function parseUsageAccessToken(rawJson: string): string | null {
     const parsed = parseJsonWithSchema(rawJson, UsageCredentialsSchema);
-    return parsed?.claudeAiOauth?.accessToken ?? null;
+    return parsed?.codexAiOauth?.accessToken ?? null;
 }
 
 function parseCachedUsageData(rawJson: string): UsageData | null {
@@ -294,7 +294,7 @@ function readUsageTokenFromMacKeychainCandidates(): string | null {
 
 function readUsageTokenFromCredentialsFile(): string | null {
     try {
-        const credFile = path.join(getClaudeConfigDir(), '.credentials.json');
+        const credFile = path.join(getCodexConfigDir(), '.credentials.json');
         return parseUsageAccessToken(fs.readFileSync(credFile, 'utf8'));
     } catch {
         return null;

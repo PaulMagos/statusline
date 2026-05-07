@@ -8,7 +8,7 @@ import type {
 
 export class VersionWidget implements Widget {
     getDefaultColor(): string { return 'gray'; }
-    getDescription(): string { return 'Shows Claude Code CLI version number'; }
+    getDescription(): string { return 'Shows Codex CLI version number'; }
     getDisplayName(): string { return 'Version'; }
     getCategory(): string { return 'Core'; }
     getEditorDisplay(item: WidgetItem): WidgetEditorDisplay {

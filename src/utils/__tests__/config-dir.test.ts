@@ -13,7 +13,7 @@ import {
     isCustomConfigPath
 } from '../config';
 
-const DEFAULT_PATH = path.join(os.homedir(), '.config', 'ccstatusline', 'settings.json');
+const DEFAULT_PATH = path.join(os.homedir(), '.config', 'codexstatusline', 'settings.json');
 
 describe('initConfigPath / getConfigPath', () => {
     beforeEach(() => {

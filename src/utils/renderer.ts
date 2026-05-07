@@ -322,7 +322,7 @@ function renderPowerlineStatusLine(
         // Reset colors after content
         // For custom commands with preserveColors, also reset text attributes like dim
         if (isPreserveColors) {
-            // Full reset to clear any attributes from command (including dim from Claude Code)
+            // Full reset to clear any attributes from command (including dim from Codex)
             widgetContent += '\x1b[0m';
         } else {
             widgetContent += '\x1b[49m\x1b[39m';
@@ -611,7 +611,7 @@ export function renderStatusLine(
     preCalculatedMaxWidths: number[]
 ): string {
     // Force 24-bit color for non-preview statusline rendering
-    // Chalk level is now set globally in ccstatusline.ts and tui.tsx
+    // Chalk level is now set globally in codexstatusline.ts and tui.tsx
     // No need to override here
 
     // Get color level from settings

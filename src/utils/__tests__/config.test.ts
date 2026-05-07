@@ -18,7 +18,7 @@ import {
     type Settings
 } from '../../types/Settings';
 
-const MOCK_HOME_DIR = '/tmp/ccstatusline-config-test-home';
+const MOCK_HOME_DIR = '/tmp/codexstatusline-config-test-home';
 const ORIGINAL_CLAUDE_CONFIG_DIR = process.env.CLAUDE_CONFIG_DIR;
 
 let loadSettings: () => Promise<Settings>;
@@ -27,7 +27,7 @@ let initConfigPath: (filePath?: string) => void;
 let consoleErrorSpy: MockInstance<typeof console.error>;
 
 function getSettingsPaths(): { configDir: string; settingsPath: string; backupPath: string } {
-    const configDir = path.join(MOCK_HOME_DIR, '.config', 'ccstatusline');
+    const configDir = path.join(MOCK_HOME_DIR, '.config', 'codexstatusline');
     return {
         configDir,
         settingsPath: path.join(configDir, 'settings.json'),
@@ -35,8 +35,8 @@ function getSettingsPaths(): { configDir: string; settingsPath: string; backupPa
     };
 }
 
-function getClaudeConfigDir(): string {
-    return path.join(MOCK_HOME_DIR, '.claude');
+function getCodexConfigDir(): string {
+    return path.join(MOCK_HOME_DIR, '.codex');
 }
 
 describe('config utilities', () => {
@@ -49,7 +49,7 @@ describe('config utilities', () => {
 
     beforeEach(() => {
         fs.rmSync(MOCK_HOME_DIR, { recursive: true, force: true });
-        process.env.CLAUDE_CONFIG_DIR = getClaudeConfigDir();
+        process.env.CLAUDE_CONFIG_DIR = getCodexConfigDir();
         const { settingsPath } = getSettingsPaths();
         initConfigPath(settingsPath);
         consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => undefined);

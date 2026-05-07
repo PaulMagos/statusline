@@ -8,7 +8,7 @@ import type {
 
 export class GitWorktreeModeWidget implements Widget {
     getDefaultColor(): string { return 'yellow'; }
-    getDescription(): string { return 'Shows indicator when Claude Code is in worktree mode'; }
+    getDescription(): string { return 'Shows indicator when Codex is in worktree mode'; }
     getDisplayName(): string { return 'Git Worktree Mode'; }
     getCategory(): string { return 'Git'; }
 

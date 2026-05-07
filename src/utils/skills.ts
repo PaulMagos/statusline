@@ -10,7 +10,7 @@ import type {
 const EMPTY: SkillsMetrics = { totalInvocations: 0, uniqueSkills: [], lastSkill: null };
 
 function getSkillsDir(): string {
-    return path.join(os.homedir(), '.cache', 'ccstatusline', 'skills');
+    return path.join(os.homedir(), '.cache', 'codexstatusline', 'skills');
 }
 
 export function getSkillsFilePath(sessionId: string): string {

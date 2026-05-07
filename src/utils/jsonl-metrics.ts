@@ -163,7 +163,7 @@ export async function getTokenMetrics(transcriptPath: string): Promise<TokenMetr
         let contextLength = 0;
 
         // Parse each line and sum up token usage for totals.
-        // Claude Code writes multiple JSONL entries per API call during streaming:
+        // Codex writes multiple JSONL entries per API call during streaming:
         // intermediate entries have stop_reason: null, and the final entry has a
         // string value like "end_turn" or "tool_use". For streaming-aware
         // transcripts, count finalized entries plus the latest unfinished entry so

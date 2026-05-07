@@ -64,10 +64,8 @@ describe('InstallMenu', () => {
         const onCancel = vi.fn();
         const instance = render(
             React.createElement(InstallMenu, {
-                bunxAvailable: true,
                 existingStatusLine: null,
-                onSelectNpx: vi.fn(),
-                onSelectBunx: vi.fn(),
+                onInstall: vi.fn(),
                 onCancel
             }),
             {
@@ -102,12 +100,10 @@ describe('InstallMenu', () => {
         const stderr = createMockStdout();
         const instance = render(
             React.createElement(InstallMenu, {
-                bunxAvailable: true,
                 existingStatusLine: null,
-                onSelectNpx: vi.fn(),
-                onSelectBunx: vi.fn(),
+                onInstall: vi.fn(),
                 onCancel: vi.fn(),
-                initialSelection: 1
+                initialSelection: 0
             }),
             {
                 stdin,
@@ -122,8 +118,7 @@ describe('InstallMenu', () => {
         try {
             await flushInk();
 
-            expect(stdout.getOutput()).toContain('▶  bunx - Bun Package Execute');
-            expect(stdout.getOutput()).not.toContain('▶  npx - Node Package Execute');
+            expect(stdout.getOutput()).toContain('▶  Write Codex status line');
         } finally {
             instance.unmount();
             instance.cleanup();

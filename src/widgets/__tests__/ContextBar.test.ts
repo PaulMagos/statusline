@@ -44,7 +44,7 @@ describe('ContextBarWidget', () => {
 
     it('falls back to token metrics and model context size', () => {
         const context: RenderContext = {
-            data: { model: { id: 'claude-3-5-sonnet-20241022' } },
+            data: { model: { id: 'codex-3-5-sonnet-20241022' } },
             tokenMetrics: {
                 inputTokens: 0,
                 outputTokens: 0,

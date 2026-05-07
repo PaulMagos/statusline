@@ -17,21 +17,21 @@ import type {
     WidgetItem
 } from '../../types';
 import { DEFAULT_SETTINGS } from '../../types/Settings';
-import { loadClaudeSettingsSync } from '../../utils/claude-settings';
+import { loadCodexSettingsSync } from '../../utils/codex-settings';
 import { ThinkingEffortWidget } from '../ThinkingEffort';
 
-// Mock claude-settings to avoid filesystem reads in tests
-vi.mock('../../utils/claude-settings', () => ({ loadClaudeSettingsSync: vi.fn() }));
+// Mock codex-settings to avoid filesystem reads in tests
+vi.mock('../../utils/codex-settings', () => ({ loadCodexSettingsSync: vi.fn() }));
 
-const mockedLoadSettings = loadClaudeSettingsSync as Mock;
-const MODEL_WITH_HIGH_EFFORT = '<local-command-stdout>Set model to \u001b[1mopus (claude-opus-4-6)\u001b[22m with \u001b[1mhigh\u001b[22m effort</local-command-stdout>';
-const MODEL_WITH_LOW_EFFORT = '<local-command-stdout>Set model to \u001b[1msonnet (claude-sonnet-4-5)\u001b[22m with \u001b[1mlow\u001b[22m effort</local-command-stdout>';
-const MODEL_WITH_MAX_EFFORT = '<local-command-stdout>Set model to \u001b[1mopus (claude-opus-4-6)\u001b[22m with \u001b[1mmax\u001b[22m effort</local-command-stdout>';
-const MODEL_WITH_XHIGH_EFFORT = '<local-command-stdout>Set model to \u001b[1mopus (claude-opus-4-7)\u001b[22m with \u001b[1mxhigh\u001b[22m effort</local-command-stdout>';
-const MODEL_WITH_XHIGH_MIXED_CASE_EFFORT = '<local-command-stdout>Set model to \u001b[1mopus (claude-opus-4-7)\u001b[22m with \u001b[1mxHigh\u001b[22m effort</local-command-stdout>';
-const MODEL_WITH_SUPER_MAX_EFFORT = '<local-command-stdout>Set model to \u001b[1mopus (claude-opus-4-8)\u001b[22m with \u001b[1msuper-max\u001b[22m effort</local-command-stdout>';
-const MODEL_WITH_SUPER_MAX_MIXED_CASE_EFFORT = '<local-command-stdout>Set model to \u001b[1mopus (claude-opus-4-8)\u001b[22m with \u001b[1mSuper-Max\u001b[22m effort</local-command-stdout>';
-const MODEL_WITHOUT_EFFORT = '<local-command-stdout>Set model to \u001b[1msonnet (claude-sonnet-4-5)\u001b[22m</local-command-stdout>';
+const mockedLoadSettings = loadCodexSettingsSync as Mock;
+const MODEL_WITH_HIGH_EFFORT = '<local-command-stdout>Set model to \u001b[1mopus (codex-opus-4-6)\u001b[22m with \u001b[1mhigh\u001b[22m effort</local-command-stdout>';
+const MODEL_WITH_LOW_EFFORT = '<local-command-stdout>Set model to \u001b[1msonnet (codex-sonnet-4-5)\u001b[22m with \u001b[1mlow\u001b[22m effort</local-command-stdout>';
+const MODEL_WITH_MAX_EFFORT = '<local-command-stdout>Set model to \u001b[1mopus (codex-opus-4-6)\u001b[22m with \u001b[1mmax\u001b[22m effort</local-command-stdout>';
+const MODEL_WITH_XHIGH_EFFORT = '<local-command-stdout>Set model to \u001b[1mopus (codex-opus-4-7)\u001b[22m with \u001b[1mxhigh\u001b[22m effort</local-command-stdout>';
+const MODEL_WITH_XHIGH_MIXED_CASE_EFFORT = '<local-command-stdout>Set model to \u001b[1mopus (codex-opus-4-7)\u001b[22m with \u001b[1mxHigh\u001b[22m effort</local-command-stdout>';
+const MODEL_WITH_SUPER_MAX_EFFORT = '<local-command-stdout>Set model to \u001b[1mopus (codex-opus-4-8)\u001b[22m with \u001b[1msuper-max\u001b[22m effort</local-command-stdout>';
+const MODEL_WITH_SUPER_MAX_MIXED_CASE_EFFORT = '<local-command-stdout>Set model to \u001b[1mopus (codex-opus-4-8)\u001b[22m with \u001b[1mSuper-Max\u001b[22m effort</local-command-stdout>';
+const MODEL_WITHOUT_EFFORT = '<local-command-stdout>Set model to \u001b[1msonnet (codex-sonnet-4-5)\u001b[22m</local-command-stdout>';
 const EFFORT_HIGH = '<local-command-stdout>Set effort level to \u001b[1mhigh\u001b[22m: Comprehensive implementation with extensive testing and documentation</local-command-stdout>';
 const EFFORT_LOW = '<local-command-stdout>Set effort level to \u001b[1mlow\u001b[22m: Quick, minimal-effort response</local-command-stdout>';
 const EFFORT_MEDIUM = '<local-command-stdout>Set effort level to \u001b[1mmedium\u001b[22m: Balanced response with good coverage</local-command-stdout>';
@@ -93,7 +93,7 @@ function render(options: {
 describe('ThinkingEffortWidget', () => {
     beforeEach(() => {
         vi.clearAllMocks();
-        tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'ccstatusline-thinking-effort-'));
+        tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'codexstatusline-thinking-effort-'));
         mockedLoadSettings.mockReturnValue({} as never);
     });
 
@@ -288,7 +288,7 @@ describe('ThinkingEffortWidget', () => {
         });
     });
 
-    describe('Claude settings fallback', () => {
+    describe('Codex settings fallback', () => {
         it('falls back to effortLevel when the latest /model output has no effort', () => {
             const result = render({
                 fileContent: makeTranscriptEntry(MODEL_WITHOUT_EFFORT),

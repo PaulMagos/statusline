@@ -15,19 +15,14 @@ import React, {
 
 import type { Settings } from '../types/Settings';
 import type { WidgetItem } from '../types/Widget';
+import { cloneSettings } from '../utils/clone-settings';
 import {
-    CCSTATUSLINE_COMMANDS,
-    getClaudeSettingsPath,
+    getCodexSettingsPath,
     getExistingStatusLine,
     installStatusLine,
-    isBunxAvailable,
-    isClaudeCodeVersionAtLeast,
     isInstalled,
-    isKnownCommand,
-    setRefreshInterval,
     uninstallStatusLine
-} from '../utils/claude-settings';
-import { cloneSettings } from '../utils/clone-settings';
+} from '../utils/codex-settings';
 import {
     getConfigPath,
     isCustomConfigPath,
@@ -43,7 +38,7 @@ import {
 } from '../utils/powerline';
 import { getPackageVersion } from '../utils/terminal';
 
-import { loadClaudeStatusLineState } from './claude-status';
+import { loadCodexStatusLineState } from './codex-status';
 import {
     ColorMenu,
     ConfirmDialog,
@@ -53,14 +48,13 @@ import {
     LineSelector,
     MainMenu,
     PowerlineSetup,
-    RefreshIntervalMenu,
     StatusLinePreview,
     TerminalOptionsMenu,
     TerminalWidthMenu,
     type MainMenuOption
 } from './components';
 
-const GITHUB_REPO_URL = 'https://github.com/sirmalloc/ccstatusline';
+const GITHUB_REPO_URL = 'https://github.com/PaulMagos/statusline';
 
 interface FlashMessage {
     text: string;
@@ -77,8 +71,7 @@ type AppScreen = 'main'
     | 'globalOverrides'
     | 'confirm'
     | 'powerline'
-    | 'install'
-    | 'refreshInterval';
+    | 'install';
 
 interface ConfirmDialogState {
     message: string;
@@ -109,7 +102,7 @@ export const App: React.FC = () => {
     const [selectedLine, setSelectedLine] = useState(0);
     const [menuSelections, setMenuSelections] = useState<Record<string, number>>({});
     const [confirmDialog, setConfirmDialog] = useState<ConfirmDialogState | null>(null);
-    const [isClaudeInstalled, setIsClaudeInstalled] = useState(false);
+    const [isCodexInstalled, setIsCodexInstalled] = useState(false);
     const [terminalWidth, setTerminalWidth] = useState(process.stdout.columns || 80);
     const [powerlineFontStatus, setPowerlineFontStatus] = useState<PowerlineFontStatus>({ installed: false });
     const [installingFonts, setInstallingFonts] = useState(false);
@@ -117,13 +110,10 @@ export const App: React.FC = () => {
     const [existingStatusLine, setExistingStatusLine] = useState<string | null>(null);
     const [flashMessage, setFlashMessage] = useState<FlashMessage | null>(null);
     const [previewIsTruncated, setPreviewIsTruncated] = useState(false);
-    const [currentRefreshInterval, setCurrentRefreshInterval] = useState<number | null>(null);
-    const [supportsRefreshInterval] = useState(() => isClaudeCodeVersionAtLeast('2.1.97'));
 
     useEffect(() => {
-        void loadClaudeStatusLineState().then((statusLineState) => {
+        void loadCodexStatusLineState().then((statusLineState) => {
             setExistingStatusLine(statusLineState.existingStatusLine);
-            setCurrentRefreshInterval(statusLineState.refreshInterval);
         });
         void loadSettings().then((loadedSettings) => {
             // Set global chalk level based on settings (default to 256 colors for compatibility)
@@ -131,7 +121,7 @@ export const App: React.FC = () => {
             setSettings(loadedSettings);
             setOriginalSettings(cloneSettings(loadedSettings));
         });
-        void isInstalled().then(setIsClaudeInstalled);
+        void isInstalled().then(setIsCodexInstalled);
 
         // Check for Powerline fonts on startup (use sync version that doesn't call execSync)
         const fontStatus = checkPowerlineFonts();
@@ -188,44 +178,41 @@ export const App: React.FC = () => {
         }
     });
 
-    const handleInstallSelection = useCallback((command: string, displayName: string, useBunx: boolean) => {
+    const handleInstallSelection = useCallback(() => {
         void getExistingStatusLine().then((existing) => {
-            const isAlreadyInstalled = isKnownCommand(existing ?? '');
             let message: string;
 
-            if (existing && !isAlreadyInstalled) {
-                message = `This will modify ${getClaudeSettingsPath()}\n\nA status line is already configured: "${existing}"\nReplace it with ${command}?`;
-            } else if (isAlreadyInstalled) {
-                message = `ccstatusline is already installed in ${getClaudeSettingsPath()}\nUpdate it with ${command}?`;
+            if (existing) {
+                message = `This will update ${getCodexSettingsPath()}\n\nCurrent Codex status line: "${existing}"\nContinue?`;
             } else {
-                message = `This will modify ${getClaudeSettingsPath()} to add ccstatusline with ${displayName}.\nContinue?`;
+                message = `This will write a Codex tui.status_line entry to ${getCodexSettingsPath()}.\nContinue?`;
             }
 
             setConfirmDialog({
                 message,
                 cancelScreen: 'install',
                 action: async () => {
-                    await installStatusLine(useBunx, supportsRefreshInterval);
-                    const installedStatusLineState = await loadClaudeStatusLineState();
-                    setIsClaudeInstalled(true);
-                    setExistingStatusLine(installedStatusLineState.existingStatusLine ?? command);
-                    setCurrentRefreshInterval(installedStatusLineState.refreshInterval);
+                    if (!settings) {
+                        return;
+                    }
+                    await saveSettings(settings);
+                    await installStatusLine(settings);
+                    const installedStatusLineState = await loadCodexStatusLineState();
+                    setIsCodexInstalled(true);
+                    setExistingStatusLine(installedStatusLineState.existingStatusLine);
+                    setOriginalSettings(cloneSettings(settings));
+                    setHasChanges(false);
                     setScreen('main');
                     setConfirmDialog(null);
                 }
             });
             setScreen('confirm');
         });
-    }, [supportsRefreshInterval]);
+    }, [settings]);
 
-    const handleNpxInstall = useCallback(() => {
+    const handleCodexInstall = useCallback(() => {
         setMenuSelections(prev => ({ ...prev, install: 0 }));
-        handleInstallSelection(CCSTATUSLINE_COMMANDS.NPM, 'npx', false);
-    }, [handleInstallSelection]);
-
-    const handleBunxInstall = useCallback(() => {
-        setMenuSelections(prev => ({ ...prev, install: 1 }));
-        handleInstallSelection(CCSTATUSLINE_COMMANDS.BUNX, 'bunx', true);
+        handleInstallSelection();
     }, [handleInstallSelection]);
 
     const handleInstallMenuCancel = useCallback(() => {
@@ -238,22 +225,21 @@ export const App: React.FC = () => {
     }
 
     const handleInstallUninstall = () => {
-        if (isClaudeInstalled) {
+        if (isCodexInstalled) {
             // Uninstall
             setConfirmDialog({
-                message: `This will remove ccstatusline from ${getClaudeSettingsPath()}. Continue?`,
+                message: `This will remove codexstatusline from ${getCodexSettingsPath()}. Continue?`,
                 action: async () => {
                     await uninstallStatusLine();
-                    setIsClaudeInstalled(false);
+                    setIsCodexInstalled(false);
                     setExistingStatusLine(null);
-                    setCurrentRefreshInterval(null);
                     setScreen('main');
                     setConfirmDialog(null);
                 }
             });
             setScreen('confirm');
         } else {
-            // Show install menu to select npx or bunx
+            // Show install menu before writing Codex config.
             setScreen('install');
         }
     };
@@ -278,12 +264,9 @@ export const App: React.FC = () => {
             case 'install':
                 handleInstallUninstall();
                 break;
-            case 'configureStatusLine':
-                setScreen('refreshInterval');
-                break;
             case 'starGithub':
                 setConfirmDialog({
-                    message: `Open the ccstatusline GitHub repository in your browser?\n\n${GITHUB_REPO_URL}`,
+                    message: `Open the codexstatusline GitHub repository in your browser?\n\n${GITHUB_REPO_URL}`,
                     action: () => {
                         const result = openExternalUrl(GITHUB_REPO_URL);
                         if (result.success) {
@@ -336,7 +319,7 @@ export const App: React.FC = () => {
             <Box marginBottom={1}>
                 <Text bold>
                     <Gradient name='retro'>
-                        CCStatusline Configuration
+                        Codex Statusline Configuration
                     </Gradient>
                 </Text>
                 <Text bold>
@@ -370,7 +353,7 @@ export const App: React.FC = () => {
 
                             void handleMainMenuSelect(value);
                         }}
-                        isClaudeInstalled={isClaudeInstalled}
+                        isCodexInstalled={isCodexInstalled}
                         hasChanges={hasChanges}
                         initialSelection={menuSelections.main}
                         powerlineFontStatus={powerlineFontStatus}
@@ -501,40 +484,10 @@ export const App: React.FC = () => {
                 )}
                 {screen === 'install' && (
                     <InstallMenu
-                        bunxAvailable={isBunxAvailable()}
                         existingStatusLine={existingStatusLine}
-                        onSelectNpx={handleNpxInstall}
-                        onSelectBunx={handleBunxInstall}
+                        onInstall={handleCodexInstall}
                         onCancel={handleInstallMenuCancel}
                         initialSelection={menuSelections.install}
-                    />
-                )}
-                {screen === 'refreshInterval' && (
-                    <RefreshIntervalMenu
-                        currentInterval={currentRefreshInterval}
-                        supportsRefreshInterval={supportsRefreshInterval}
-                        onUpdate={(interval) => {
-                            const previous = currentRefreshInterval;
-                            setCurrentRefreshInterval(interval);
-                            void setRefreshInterval(interval)
-                                .then(() => {
-                                    setFlashMessage({
-                                        text: '✓ Refresh interval updated',
-                                        color: 'green'
-                                    });
-                                })
-                                .catch(() => {
-                                    setCurrentRefreshInterval(previous);
-                                    setFlashMessage({
-                                        text: '✗ Failed to save refresh interval',
-                                        color: 'red'
-                                    });
-                                });
-                            setScreen('main');
-                        }}
-                        onBack={() => {
-                            setScreen('main');
-                        }}
                     />
                 )}
                 {screen === 'powerline' && (

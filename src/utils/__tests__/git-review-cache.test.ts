@@ -205,8 +205,8 @@ describe('git-review-cache', () => {
         expect(writtenCachePaths.length).toBe(2);
         expect(writtenCachePaths[0]).not.toBe(writtenCachePaths[1]);
         const normalize = (filePath: string): string => filePath.replace(/\\/g, '/');
-        expect(normalize(writtenCachePaths[0] ?? '')).toContain('/.cache/ccstatusline/git-review/git-review-');
-        expect(normalize(writtenCachePaths[1] ?? '')).toContain('/.cache/ccstatusline/git-review/git-review-');
+        expect(normalize(writtenCachePaths[0] ?? '')).toContain('/.cache/codexstatusline/git-review/git-review-');
+        expect(normalize(writtenCachePaths[1] ?? '')).toContain('/.cache/codexstatusline/git-review/git-review-');
 
         harness.setCurrentRef('feature/cache-a');
         expect(fetchGitReviewData('/tmp/repo', harness.deps)).toEqual({

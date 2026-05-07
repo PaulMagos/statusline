@@ -61,7 +61,7 @@ function setListLimit(item: WidgetItem, limit: number): WidgetItem {
 
 export class SkillsWidget implements Widget {
     getDefaultColor(): string { return 'magenta'; }
-    getDescription(): string { return 'Shows Claude Code skill invocations from hook data'; }
+    getDescription(): string { return 'Shows Codex skill invocations from hook data'; }
     getDisplayName(): string { return 'Skills'; }
     getCategory(): string { return 'Session'; }
     supportsRawValue(): boolean { return true; }

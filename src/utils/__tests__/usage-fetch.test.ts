@@ -26,12 +26,12 @@ interface UsageProbeResult {
 
 interface TokenHome {
     bin: string;
-    claudeConfig: string;
+    codexConfig: string;
     home: string;
 }
 
 interface ProbeOptions {
-    claudeConfigDir?: string;
+    codexConfigDir?: string;
     home: string;
     httpsProxy?: string;
     lowercaseHttpsProxy?: string;
@@ -44,7 +44,7 @@ interface ProbeOptions {
 }
 
 function createProbeHarness() {
-    const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'ccstatusline-usage-test-'));
+    const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'codexstatusline-usage-test-'));
     const probeScriptPath = path.join(tempRoot, 'probe-usage.mjs');
     const usageModulePath = fileURLToPath(new URL('../usage.ts', import.meta.url));
 
@@ -133,8 +133,8 @@ https.request = (...args) => {
 
 const { fetchUsageData } = await import(${JSON.stringify(usageModulePath)});
 
-const lockFile = path.join(os.homedir(), '.cache', 'ccstatusline', 'usage.lock');
-const cacheFile = path.join(os.homedir(), '.cache', 'ccstatusline', 'usage.json');
+const lockFile = path.join(os.homedir(), '.cache', 'codexstatusline', 'usage.lock');
+const cacheFile = path.join(os.homedir(), '.cache', 'codexstatusline', 'usage.json');
 const nowMs = Number(process.env.TEST_NOW_MS || Date.now());
 Date.now = () => nowMs;
 
@@ -163,21 +163,21 @@ process.stdout.write(JSON.stringify({
     function createTokenHome(name: string): TokenHome {
         const home = path.join(tempRoot, `home-${name}`);
         const bin = path.join(tempRoot, `bin-${name}`);
-        const claudeConfig = path.join(tempRoot, `claude-${name}`);
+        const codexConfig = path.join(tempRoot, `codex-${name}`);
         const securityScript = path.join(bin, 'security');
-        const credentialsFile = path.join(claudeConfig, '.credentials.json');
+        const credentialsFile = path.join(codexConfig, '.credentials.json');
 
         fs.mkdirSync(home, { recursive: true });
         fs.mkdirSync(bin, { recursive: true });
-        fs.mkdirSync(claudeConfig, { recursive: true });
+        fs.mkdirSync(codexConfig, { recursive: true });
 
-        fs.writeFileSync(securityScript, '#!/bin/sh\necho \'{"claudeAiOauth":{"accessToken":"test-token"}}\'\n');
+        fs.writeFileSync(securityScript, '#!/bin/sh\necho \'{"codexAiOauth":{"accessToken":"test-token"}}\'\n');
         fs.chmodSync(securityScript, 0o755);
-        fs.writeFileSync(credentialsFile, JSON.stringify({ claudeAiOauth: { accessToken: 'test-token' } }));
+        fs.writeFileSync(credentialsFile, JSON.stringify({ codexAiOauth: { accessToken: 'test-token' } }));
 
         return {
             bin,
-            claudeConfig,
+            codexConfig,
             home
         };
     }
@@ -194,7 +194,7 @@ process.stdout.write(JSON.stringify({
                 TEST_RESPONSE_BODY: options.responseBody ?? '',
                 TEST_RESPONSE_HEADERS_JSON: JSON.stringify(options.responseHeaders ?? {}),
                 TEST_STATUS_CODE: String(options.statusCode ?? (options.mode === 'success' ? 200 : 500)),
-                ...(options.claudeConfigDir ? { CLAUDE_CONFIG_DIR: options.claudeConfigDir } : {}),
+                ...(options.codexConfigDir ? { CLAUDE_CONFIG_DIR: options.codexConfigDir } : {}),
                 ...(options.httpsProxy !== undefined ? { HTTPS_PROXY: options.httpsProxy } : {}),
                 ...(options.lowercaseHttpsProxy !== undefined ? { https_proxy: options.lowercaseHttpsProxy } : {})
             }
@@ -274,7 +274,7 @@ describe('fetchUsageData error handling', () => {
             expect(noCredentialsResult.proxyAgentConfigured).toBe(false);
 
             const apiErrorResult = harness.runProbe({
-                claudeConfigDir: apiErrorHome.claudeConfig,
+                codexConfigDir: apiErrorHome.codexConfig,
                 home: apiErrorHome.home,
                 mode: 'error',
                 nowMs,
@@ -293,7 +293,7 @@ describe('fetchUsageData error handling', () => {
             });
 
             const genericLockResult = harness.runProbe({
-                claudeConfigDir: apiErrorHome.claudeConfig,
+                codexConfigDir: apiErrorHome.codexConfig,
                 home: apiErrorHome.home,
                 mode: 'unexpected',
                 nowMs,
@@ -305,7 +305,7 @@ describe('fetchUsageData error handling', () => {
             expect(genericLockResult.requestCount).toBe(0);
 
             const successResult = harness.runProbe({
-                claudeConfigDir: successHome.claudeConfig,
+                codexConfigDir: successHome.codexConfig,
                 home: successHome.home,
                 mode: 'success',
                 nowMs,
@@ -326,7 +326,7 @@ describe('fetchUsageData error handling', () => {
             expect(successResult.requestHost).toBe('api.anthropic.com');
 
             const httpsProxyResult = harness.runProbe({
-                claudeConfigDir: proxyHome.claudeConfig,
+                codexConfigDir: proxyHome.codexConfig,
                 home: proxyHome.home,
                 httpsProxy: 'http://proxy.local:8080',
                 mode: 'success',
@@ -342,7 +342,7 @@ describe('fetchUsageData error handling', () => {
             expect(httpsProxyResult.requestHost).toBe('api.anthropic.com');
 
             const lowercaseProxyResult = harness.runProbe({
-                claudeConfigDir: lowercaseProxyHome.claudeConfig,
+                codexConfigDir: lowercaseProxyHome.codexConfig,
                 home: lowercaseProxyHome.home,
                 lowercaseHttpsProxy: 'http://proxy.local:8080',
                 mode: 'success',
@@ -357,7 +357,7 @@ describe('fetchUsageData error handling', () => {
             expect(lowercaseProxyResult.proxyAgentConfigured).toBe(false);
 
             const blankProxyResult = harness.runProbe({
-                claudeConfigDir: blankProxyHome.claudeConfig,
+                codexConfigDir: blankProxyHome.codexConfig,
                 home: blankProxyHome.home,
                 httpsProxy: '   ',
                 mode: 'success',
@@ -372,7 +372,7 @@ describe('fetchUsageData error handling', () => {
             expect(blankProxyResult.proxyAgentConfigured).toBe(false);
 
             const invalidProxyResult = harness.runProbe({
-                claudeConfigDir: invalidProxyHome.claudeConfig,
+                codexConfigDir: invalidProxyHome.codexConfig,
                 home: invalidProxyHome.home,
                 httpsProxy: '://bad-proxy',
                 mode: 'success',
@@ -387,7 +387,7 @@ describe('fetchUsageData error handling', () => {
             expect(invalidProxyResult.proxyAgentConfigured).toBe(false);
 
             const staleProxyResult = harness.runProbe({
-                claudeConfigDir: successHome.claudeConfig,
+                codexConfigDir: successHome.codexConfig,
                 home: successHome.home,
                 httpsProxy: '://bad-proxy',
                 mode: 'success',
@@ -402,7 +402,7 @@ describe('fetchUsageData error handling', () => {
             expect(staleProxyResult.proxyAgentConfigured).toBe(false);
 
             const cachedSuccessResult = harness.runProbe({
-                claudeConfigDir: successHome.claudeConfig,
+                codexConfigDir: successHome.codexConfig,
                 home: successHome.home,
                 mode: 'unexpected',
                 nowMs,
@@ -425,7 +425,7 @@ describe('fetchUsageData error handling', () => {
             const home = harness.createTokenHome('rate-limited-with-cache');
             const rateLimitNowMs = nowMs + 31000;
             const successResult = harness.runProbe({
-                claudeConfigDir: home.claudeConfig,
+                codexConfigDir: home.codexConfig,
                 home: home.home,
                 mode: 'success',
                 nowMs,
@@ -434,7 +434,7 @@ describe('fetchUsageData error handling', () => {
             });
 
             const rateLimitedResult = harness.runProbe({
-                claudeConfigDir: home.claudeConfig,
+                codexConfigDir: home.codexConfig,
                 home: home.home,
                 mode: 'status',
                 nowMs: rateLimitNowMs,
@@ -453,7 +453,7 @@ describe('fetchUsageData error handling', () => {
             });
 
             const activeBackoffResult = harness.runProbe({
-                claudeConfigDir: home.claudeConfig,
+                codexConfigDir: home.codexConfig,
                 home: home.home,
                 mode: 'unexpected',
                 nowMs: rateLimitNowMs + 600000,
@@ -465,7 +465,7 @@ describe('fetchUsageData error handling', () => {
             expect(activeBackoffResult.requestCount).toBe(0);
 
             const postBackoffResult = harness.runProbe({
-                claudeConfigDir: home.claudeConfig,
+                codexConfigDir: home.codexConfig,
                 home: home.home,
                 mode: 'success',
                 nowMs: rateLimitNowMs + 3601000,
@@ -492,7 +492,7 @@ describe('fetchUsageData error handling', () => {
         try {
             const home = harness.createTokenHome('rate-limited-no-cache');
             const firstRateLimitedResult = harness.runProbe({
-                claudeConfigDir: home.claudeConfig,
+                codexConfigDir: home.codexConfig,
                 home: home.home,
                 mode: 'status',
                 nowMs,
@@ -511,7 +511,7 @@ describe('fetchUsageData error handling', () => {
             });
 
             const activeBackoffResult = harness.runProbe({
-                claudeConfigDir: home.claudeConfig,
+                codexConfigDir: home.codexConfig,
                 home: home.home,
                 mode: 'unexpected',
                 nowMs: nowMs + 299000,
@@ -523,7 +523,7 @@ describe('fetchUsageData error handling', () => {
             expect(activeBackoffResult.requestCount).toBe(0);
 
             const postBackoffResult = harness.runProbe({
-                claudeConfigDir: home.claudeConfig,
+                codexConfigDir: home.codexConfig,
                 home: home.home,
                 mode: 'success',
                 nowMs: nowMs + 301000,
@@ -551,7 +551,7 @@ describe('fetchUsageData error handling', () => {
             const home = harness.createTokenHome('rate-limited-http-date');
             const retryAt = new Date(nowMs + 900000).toUTCString();
             const result = harness.runProbe({
-                claudeConfigDir: home.claudeConfig,
+                codexConfigDir: home.codexConfig,
                 home: home.home,
                 mode: 'status',
                 nowMs,
@@ -577,7 +577,7 @@ describe('fetchUsageData error handling', () => {
 
         try {
             const home = harness.createTokenHome('legacy-lock');
-            const lockDir = path.join(home.home, '.cache', 'ccstatusline');
+            const lockDir = path.join(home.home, '.cache', 'codexstatusline');
             const lockFile = path.join(lockDir, 'usage.lock');
 
             fs.mkdirSync(lockDir, { recursive: true });
@@ -585,7 +585,7 @@ describe('fetchUsageData error handling', () => {
             fs.utimesSync(lockFile, new Date(nowMs), new Date(nowMs));
 
             const result = harness.runProbe({
-                claudeConfigDir: home.claudeConfig,
+                codexConfigDir: home.codexConfig,
                 home: home.home,
                 mode: 'unexpected',
                 nowMs,

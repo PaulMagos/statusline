@@ -15,14 +15,13 @@ export type MainMenuOption = 'lines'
     | 'terminalConfig'
     | 'globalOverrides'
     | 'install'
-    | 'configureStatusLine'
     | 'starGithub'
     | 'save'
     | 'exit';
 
 export interface MainMenuProps {
     onSelect: (value: MainMenuOption, index: number) => void;
-    isClaudeInstalled: boolean;
+    isCodexInstalled: boolean;
     hasChanges: boolean;
     initialSelection?: number;
     powerlineFontStatus: PowerlineFontStatus;
@@ -32,7 +31,7 @@ export interface MainMenuProps {
 
 export const MainMenu: React.FC<MainMenuProps> = ({
     onSelect,
-    isClaudeInstalled,
+    isCodexInstalled,
     hasChanges,
     initialSelection = 0,
     powerlineFontStatus,
@@ -76,24 +75,19 @@ export const MainMenu: React.FC<MainMenuProps> = ({
                 'Set global padding, separators, and color overrides that apply to all widgets'
         },
         '-' as const,
-        ...(isClaudeInstalled
+        ...(isCodexInstalled
             ? [
                 {
-                    label: '🔧 Configure Status Line',
-                    value: 'configureStatusLine' as MainMenuOption,
-                    description: 'Configure Claude Code status line settings like refresh interval'
-                },
-                {
-                    label: '🔌 Uninstall from Claude Code',
+                    label: '🔌 Uninstall from Codex',
                     value: 'install' as MainMenuOption,
-                    description: 'Remove ccstatusline from your Claude Code settings'
+                    description: 'Remove codexstatusline from your Codex settings'
                 }
             ]
             : [
                 {
-                    label: '📦 Install to Claude Code',
+                    label: '📦 Install to Codex',
                     value: 'install' as MainMenuOption,
-                    description: 'Add ccstatusline to your Claude Code settings for automatic status line rendering'
+                    description: 'Add codexstatusline to your Codex settings for automatic status line rendering'
                 }
             ]
         )
@@ -113,9 +107,9 @@ export const MainMenu: React.FC<MainMenuProps> = ({
             },
             '-' as const,
             {
-                label: '⭐ Like ccstatusline? Star us on GitHub',
+                label: '⭐ Like codexstatusline? Star us on GitHub',
                 value: 'starGithub',
-                description: 'Open the ccstatusline GitHub repository in your browser so you can star the project'
+                description: 'Open the codexstatusline GitHub repository in your browser so you can star the project'
             }
         );
     } else {
@@ -127,9 +121,9 @@ export const MainMenu: React.FC<MainMenuProps> = ({
             },
             '-' as const,
             {
-                label: '⭐ Like ccstatusline? Star us on GitHub',
+                label: '⭐ Like codexstatusline? Star us on GitHub',
                 value: 'starGithub',
-                description: 'Open the ccstatusline GitHub repository in your browser so you can star the project'
+                description: 'Open the codexstatusline GitHub repository in your browser so you can star the project'
             }
         );
     }

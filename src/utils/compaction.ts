@@ -52,7 +52,7 @@ function normalizeOptions(options: number | DetectCompactionOptions): Required<P
  * Detect context compaction events.
  *
  * Within the same context window size, context only grows until compaction, so
- * any percentage drop beyond the threshold indicates Claude Code compacted the
+ * any percentage drop beyond the threshold indicates Codex compacted the
  * conversation. The threshold filters rounding noise and cache accounting
  * wobble - a drop must exceed the threshold (default: more than 2 points) to
  * count. When a known context window size changes, the previous percentage
@@ -92,7 +92,7 @@ export function detectCompaction(
 }
 
 function getCacheDir(): string {
-    return path.join(os.homedir(), '.cache', 'ccstatusline', 'compaction');
+    return path.join(os.homedir(), '.cache', 'codexstatusline', 'compaction');
 }
 
 function sanitizeSessionId(sessionId: string): string {

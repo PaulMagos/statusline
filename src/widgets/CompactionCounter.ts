@@ -104,7 +104,7 @@ function formatCount(count: number, format: CompactionCounterFormat, icon: strin
 /**
  * Displays a count of context compaction events in the current session.
  *
- * Claude Code periodically compacts (summarizes) conversation context when it
+ * Codex periodically compacts (summarizes) conversation context when it
  * approaches the context window limit. This widget tracks how many times
  * compaction has occurred by detecting drops in used_percentage between renders.
  *

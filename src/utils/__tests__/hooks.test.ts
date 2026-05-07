@@ -14,21 +14,21 @@ import { DEFAULT_SETTINGS } from '../../types/Settings';
 import { syncWidgetHooks } from '../hooks';
 
 const ORIGINAL_CLAUDE_CONFIG_DIR = process.env.CLAUDE_CONFIG_DIR;
-let testClaudeConfigDir = '';
+let testCodexConfigDir = '';
 
-function getClaudeSettingsPath(): string {
-    return path.join(testClaudeConfigDir, 'settings.json');
+function getCodexSettingsPath(): string {
+    return path.join(testCodexConfigDir, 'settings.json');
 }
 
 describe('syncWidgetHooks', () => {
     beforeEach(() => {
-        testClaudeConfigDir = fs.mkdtempSync(path.join(os.tmpdir(), 'ccstatusline-hooks-'));
-        process.env.CLAUDE_CONFIG_DIR = testClaudeConfigDir;
+        testCodexConfigDir = fs.mkdtempSync(path.join(os.tmpdir(), 'codexstatusline-hooks-'));
+        process.env.CLAUDE_CONFIG_DIR = testCodexConfigDir;
     });
 
     afterEach(() => {
-        if (testClaudeConfigDir) {
-            fs.rmSync(testClaudeConfigDir, { recursive: true, force: true });
+        if (testCodexConfigDir) {
+            fs.rmSync(testCodexConfigDir, { recursive: true, force: true });
         }
     });
 
@@ -41,12 +41,12 @@ describe('syncWidgetHooks', () => {
     });
 
     it('removes managed hooks and persists cleanup when status line is unset', async () => {
-        const settingsPath = getClaudeSettingsPath();
+        const settingsPath = getCodexSettingsPath();
         fs.writeFileSync(settingsPath, JSON.stringify({
             hooks: {
                 PreToolUse: [
                     {
-                        _tag: 'ccstatusline-managed',
+                        _tag: 'codexstatusline-managed',
                         matcher: 'Skill',
                         hooks: [{ type: 'command', command: 'old-command --hook' }]
                     },
@@ -57,7 +57,7 @@ describe('syncWidgetHooks', () => {
                 ],
                 UserPromptSubmit: [
                     {
-                        _tag: 'ccstatusline-managed',
+                        _tag: 'codexstatusline-managed',
                         hooks: [{ type: 'command', command: 'old-command --hook' }]
                     }
                 ]

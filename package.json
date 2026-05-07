@@ -1,18 +1,18 @@
 {
-  "name": "ccstatusline",
+  "name": "codexstatusline",
   "version": "2.2.12",
-  "description": "A customizable status line formatter for Claude Code CLI",
-  "module": "src/ccstatusline.ts",
+  "description": "A status line configurator for Codex CLI",
+  "module": "src/codexstatusline.ts",
   "type": "module",
   "bin": {
-    "ccstatusline": "dist/ccstatusline.js"
+    "codexstatusline": "dist/codexstatusline.js"
   },
   "files": [
     "dist/"
   ],
   "scripts": {
-    "start": "bun run src/ccstatusline.ts",
-    "build": "rm -rf dist/* ; bun build src/ccstatusline.ts --target=node --outfile=dist/ccstatusline.js --target-version=14",
+    "start": "bun run src/codexstatusline.ts",
+    "build": "rm -rf dist/* ; bun build src/codexstatusline.ts --target=node --outfile=dist/codexstatusline.js --target-version=14",
     "postbuild": "bun run scripts/replace-version.ts",
     "example": "cat scripts/payload.example.json | bun start",
     "prepublishOnly": "bun run build",
@@ -51,9 +51,9 @@
     "zod": "^4.0.17"
   },
   "keywords": [
-    "claude",
-    "claude-code",
+    "codex",
     "cli",
+    "config",
     "status-line",
     "terminal"
   ],
@@ -61,7 +61,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/sirmalloc/ccstatusline.git"
+    "url": "git+https://github.com/PaulMagos/statusline.git"
   },
   "engines": {
     "node": ">=14.0.0"

@@ -120,7 +120,7 @@ describe('VimModeWidget', () => {
         });
 
         it('returns null when vim field is absent (vim disabled)', () => {
-            const ctx = makeContext({ data: { model: { id: 'claude-sonnet-4-5' } } });
+            const ctx = makeContext({ data: { model: { id: 'codex-sonnet-4-5' } } });
             expect(new VimModeWidget().render(ITEM, ctx, DEFAULT_SETTINGS)).toBeNull();
         });
 

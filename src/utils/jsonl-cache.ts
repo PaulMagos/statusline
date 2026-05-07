@@ -5,7 +5,7 @@ import path from 'node:path';
 
 import type { BlockMetrics } from '../types';
 
-import { getClaudeConfigDir } from './claude-settings';
+import { getCodexConfigDir } from './codex-settings';
 import { getBlockMetrics } from './jsonl-blocks';
 
 const readFileSync = fs.readFileSync;
@@ -23,9 +23,9 @@ function normalizeConfigDir(configDir: string): string {
 }
 
 /**
- * Returns the path to the block cache file for a specific Claude config directory
+ * Returns the path to the block cache file for a specific Codex config directory
  */
-export function getBlockCachePath(configDir = getClaudeConfigDir()): string {
+export function getBlockCachePath(configDir = getCodexConfigDir()): string {
     const normalizedConfigDir = normalizeConfigDir(configDir);
     const configHash = createHash('sha256')
         .update(normalizedConfigDir)
@@ -35,7 +35,7 @@ export function getBlockCachePath(configDir = getClaudeConfigDir()): string {
     return path.join(
         os.homedir(),
         '.cache',
-        'ccstatusline',
+        'codexstatusline',
         `block-cache-${configHash}.json`
     );
 }
@@ -80,7 +80,7 @@ export function readBlockCache(expectedConfigDir?: string): Date | null {
  * Writes the block start time to the cache file
  * Creates the cache directory if it doesn't exist
  */
-export function writeBlockCache(startTime: Date, configDir = getClaudeConfigDir()): void {
+export function writeBlockCache(startTime: Date, configDir = getCodexConfigDir()): void {
     try {
         const normalizedConfigDir = normalizeConfigDir(configDir);
         const cachePath = getBlockCachePath(normalizedConfigDir);
@@ -105,7 +105,7 @@ export function writeBlockCache(startTime: Date, configDir = getClaudeConfigDir(
 export function getCachedBlockMetrics(sessionDurationHours = 5): BlockMetrics | null {
     const sessionDurationMs = sessionDurationHours * 60 * 60 * 1000;
     const now = new Date();
-    const activeConfigDir = getClaudeConfigDir();
+    const activeConfigDir = getCodexConfigDir();
 
     // Check cache first
     const cachedStartTime = readBlockCache(activeConfigDir);

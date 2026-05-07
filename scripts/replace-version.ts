@@ -16,7 +16,7 @@ const packageJson = JSON.parse(readFileSync('package.json', 'utf-8')) as Package
 const version = packageJson.version;
 
 // Read the bundled file
-const bundledFilePath = join('dist', 'ccstatusline.js');
+const bundledFilePath = join('dist', 'codexstatusline.js');
 let bundledContent = readFileSync(bundledFilePath, 'utf-8');
 
 // Replace the placeholder with the actual version

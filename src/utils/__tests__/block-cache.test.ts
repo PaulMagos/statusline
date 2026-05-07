@@ -24,28 +24,28 @@ function getExpectedCachePath(homeDir: string, configDir: string): string {
         .digest('hex')
         .slice(0, 16);
 
-    return path.join(homeDir, '.cache', 'ccstatusline', `block-cache-${configHash}.json`);
+    return path.join(homeDir, '.cache', 'codexstatusline', `block-cache-${configHash}.json`);
 }
 
 describe('Block Cache Functions', () => {
     let tempDir: string;
-    let originalClaudeConfigDir: string | undefined;
+    let originalCodexConfigDir: string | undefined;
 
     beforeEach(() => {
         // Create a temp directory for test isolation
-        tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'ccstatusline-test-'));
+        tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'codexstatusline-test-'));
         // Mock os.homedir to use temp directory
         vi.spyOn(os, 'homedir').mockReturnValue(tempDir);
-        originalClaudeConfigDir = process.env.CLAUDE_CONFIG_DIR;
-        process.env.CLAUDE_CONFIG_DIR = path.join(tempDir, '.claude-default');
+        originalCodexConfigDir = process.env.CLAUDE_CONFIG_DIR;
+        process.env.CLAUDE_CONFIG_DIR = path.join(tempDir, '.codex-default');
     });
 
     afterEach(() => {
         vi.restoreAllMocks();
-        if (originalClaudeConfigDir === undefined) {
+        if (originalCodexConfigDir === undefined) {
             delete process.env.CLAUDE_CONFIG_DIR;
         } else {
-            process.env.CLAUDE_CONFIG_DIR = originalClaudeConfigDir;
+            process.env.CLAUDE_CONFIG_DIR = originalCodexConfigDir;
         }
         // Clean up temp directory
         fs.rmSync(tempDir, { recursive: true, force: true });
@@ -54,12 +54,12 @@ describe('Block Cache Functions', () => {
     describe('getBlockCachePath', () => {
         it('should return the correct cache path', () => {
             const cachePath = getBlockCachePath();
-            expect(cachePath).toBe(getExpectedCachePath(tempDir, path.join(tempDir, '.claude-default')));
+            expect(cachePath).toBe(getExpectedCachePath(tempDir, path.join(tempDir, '.codex-default')));
         });
 
         it('should return different cache paths for different config directories', () => {
-            const profileA = path.join(tempDir, '.claude-profile-a');
-            const profileB = path.join(tempDir, '.claude-profile-b');
+            const profileA = path.join(tempDir, '.codex-profile-a');
+            const profileB = path.join(tempDir, '.codex-profile-b');
 
             const pathA = getBlockCachePath(profileA);
             const pathB = getBlockCachePath(profileB);
@@ -89,7 +89,7 @@ describe('Block Cache Functions', () => {
 
         it('should return cached date when configDir matches expected value', () => {
             const testDate = new Date('2025-01-26T14:00:00.000Z');
-            const configDir = path.join(tempDir, '.claude-profile-a');
+            const configDir = path.join(tempDir, '.codex-profile-a');
             const cachePath = getBlockCachePath(configDir);
             const cacheDir = path.dirname(cachePath);
             fs.mkdirSync(cacheDir, { recursive: true });
@@ -104,7 +104,7 @@ describe('Block Cache Functions', () => {
 
         it('should return null when cache configDir does not match expected value', () => {
             const testDate = new Date('2025-01-26T14:00:00.000Z');
-            const expectedConfigDir = path.join(tempDir, '.claude-profile-b');
+            const expectedConfigDir = path.join(tempDir, '.codex-profile-b');
             const cachePath = getBlockCachePath(expectedConfigDir);
             const cacheDir = path.dirname(cachePath);
             fs.mkdirSync(cacheDir, { recursive: true });
@@ -112,7 +112,7 @@ describe('Block Cache Functions', () => {
                 cachePath,
                 JSON.stringify({
                     startTime: testDate.toISOString(),
-                    configDir: path.join(tempDir, '.claude-profile-a')
+                    configDir: path.join(tempDir, '.codex-profile-a')
                 })
             );
 
@@ -122,7 +122,7 @@ describe('Block Cache Functions', () => {
 
         it('should return null when expected configDir is provided but cache has legacy schema', () => {
             const testDate = new Date('2025-01-26T14:00:00.000Z');
-            const expectedConfigDir = path.join(tempDir, '.claude-profile-a');
+            const expectedConfigDir = path.join(tempDir, '.codex-profile-a');
             const cachePath = getBlockCachePath(expectedConfigDir);
             const cacheDir = path.dirname(cachePath);
             fs.mkdirSync(cacheDir, { recursive: true });
@@ -176,7 +176,7 @@ describe('Block Cache Functions', () => {
     describe('writeBlockCache', () => {
         it('should create directory and write cache file', () => {
             const testDate = new Date('2025-01-26T14:00:00.000Z');
-            const configDir = path.join(tempDir, '.claude-profile-a');
+            const configDir = path.join(tempDir, '.codex-profile-a');
 
             writeBlockCache(testDate, configDir);
 
@@ -191,7 +191,7 @@ describe('Block Cache Functions', () => {
         it('should overwrite existing cache file', () => {
             const firstDate = new Date('2025-01-26T14:00:00.000Z');
             const secondDate = new Date('2025-01-26T16:00:00.000Z');
-            const configDir = path.join(tempDir, '.claude-profile-a');
+            const configDir = path.join(tempDir, '.codex-profile-a');
 
             writeBlockCache(firstDate, configDir);
             writeBlockCache(secondDate, configDir);
@@ -207,24 +207,24 @@ describe('Block Cache Functions', () => {
 
 describe('getCachedBlockMetrics integration', () => {
     let tempDir: string;
-    let originalClaudeConfigDir: string | undefined;
+    let originalCodexConfigDir: string | undefined;
 
     beforeEach(() => {
-        tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'ccstatusline-test-'));
+        tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'codexstatusline-test-'));
         vi.spyOn(os, 'homedir').mockReturnValue(tempDir);
         // Mock CLAUDE_CONFIG_DIR to point to a non-existent directory
         // This ensures getBlockMetrics returns null when cache is expired
-        originalClaudeConfigDir = process.env.CLAUDE_CONFIG_DIR;
-        process.env.CLAUDE_CONFIG_DIR = path.join(tempDir, '.claude-nonexistent');
+        originalCodexConfigDir = process.env.CLAUDE_CONFIG_DIR;
+        process.env.CLAUDE_CONFIG_DIR = path.join(tempDir, '.codex-nonexistent');
     });
 
     afterEach(() => {
         vi.restoreAllMocks();
         // Restore original CLAUDE_CONFIG_DIR
-        if (originalClaudeConfigDir === undefined) {
+        if (originalCodexConfigDir === undefined) {
             delete process.env.CLAUDE_CONFIG_DIR;
         } else {
-            process.env.CLAUDE_CONFIG_DIR = originalClaudeConfigDir;
+            process.env.CLAUDE_CONFIG_DIR = originalCodexConfigDir;
         }
         fs.rmSync(tempDir, { recursive: true, force: true });
     });
@@ -273,8 +273,8 @@ describe('getCachedBlockMetrics integration', () => {
 
     it('should recalculate when cache belongs to a different config directory', async () => {
         const { getCachedBlockMetrics, writeBlockCache } = await import('../jsonl');
-        const profileA = path.join(tempDir, '.claude-profile-a');
-        const profileB = path.join(tempDir, '.claude-profile-b');
+        const profileA = path.join(tempDir, '.codex-profile-a');
+        const profileB = path.join(tempDir, '.codex-profile-b');
 
         const testStartTime = new Date();
         testStartTime.setHours(testStartTime.getHours() - 2);

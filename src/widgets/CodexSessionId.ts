@@ -6,10 +6,10 @@ import type {
     WidgetItem
 } from '../types/Widget';
 
-export class ClaudeSessionIdWidget implements Widget {
+export class CodexSessionIdWidget implements Widget {
     getDefaultColor(): string { return 'cyan'; }
-    getDescription(): string { return 'Shows the current Claude Code session ID reported in status JSON'; }
-    getDisplayName(): string { return 'Claude Session ID'; }
+    getDescription(): string { return 'Shows the current Codex session ID reported in status JSON'; }
+    getDisplayName(): string { return 'Codex Session ID'; }
     getCategory(): string { return 'Core'; }
     getEditorDisplay(item: WidgetItem): WidgetEditorDisplay {
         return { displayText: this.getDisplayName() };

@@ -5,7 +5,7 @@ import type {
     WidgetEditorDisplay,
     WidgetItem
 } from '../types/Widget';
-import { loadClaudeSettingsSync } from '../utils/claude-settings';
+import { loadCodexSettingsSync } from '../utils/codex-settings';
 import {
     getTranscriptThinkingEffort,
     normalizeThinkingEffort,
@@ -26,7 +26,7 @@ function resolveThinkingEffortFromStatusJson(context: RenderContext): ResolvedTh
 
 function resolveThinkingEffortFromSettings(): ResolvedThinkingEffort | undefined {
     try {
-        const settings = loadClaudeSettingsSync({ logErrors: false });
+        const settings = loadCodexSettingsSync({ logErrors: false });
         return normalizeThinkingEffort(settings.effortLevel);
     } catch {
         // Settings unavailable, return undefined
@@ -55,7 +55,7 @@ function formatEffort(resolved: ResolvedThinkingEffort | null): string {
 
 export class ThinkingEffortWidget implements Widget {
     getDefaultColor(): string { return 'magenta'; }
-    getDescription(): string { return 'Displays the current thinking effort level (low, medium, high, xhigh, max).\nUnknown levels are shown with a trailing "?" (e.g. "super-max?").\nMay be incorrect when multiple Claude Code sessions are running due to current Claude Code limitations.'; }
+    getDescription(): string { return 'Displays the current thinking effort level (low, medium, high, xhigh, max).\nUnknown levels are shown with a trailing "?" (e.g. "super-max?").\nMay be incorrect when multiple Codex sessions are running due to current Codex limitations.'; }
     getDisplayName(): string { return 'Thinking Effort'; }
     getCategory(): string { return 'Core'; }
     getEditorDisplay(item: WidgetItem): WidgetEditorDisplay {

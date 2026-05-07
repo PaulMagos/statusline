@@ -61,7 +61,7 @@ describe('ContextPercentageWidget', () => {
         };
         const context: RenderContext = {
             data: {
-                model: { id: 'claude-3-5-sonnet-20241022' },
+                model: { id: 'codex-3-5-sonnet-20241022' },
                 context_window: {
                     context_window_size: 200000,
                     used_percentage: 9.3
@@ -81,12 +81,12 @@ describe('ContextPercentageWidget', () => {
 
     describe('Sonnet 4.5 with 1M context window', () => {
         it('should calculate percentage using 1M denominator for Sonnet 4.5 with [1m] suffix', () => {
-            const result = render('claude-sonnet-4-5-20250929[1m]', 42000);
+            const result = render('codex-sonnet-4-5-20250929[1m]', 42000);
             expect(result).toBe('Ctx Used: 4.2%');
         });
 
         it('should calculate percentage using 1M denominator for Sonnet 4.5 (raw value) with [1m] suffix', () => {
-            const result = render('claude-sonnet-4-5-20250929[1m]', 42000, true);
+            const result = render('codex-sonnet-4-5-20250929[1m]', 42000, true);
             expect(result).toBe('4.2%');
         });
 
@@ -123,7 +123,7 @@ describe('ContextPercentageWidget', () => {
         };
         const context: RenderContext = {
             data: {
-                model: { id: 'claude-3-5-sonnet-20241022' },
+                model: { id: 'codex-3-5-sonnet-20241022' },
                 context_window: {
                     context_window_size: 200000,
                     used_percentage: 50
@@ -143,7 +143,7 @@ describe('ContextPercentageWidget', () => {
         };
         const context: RenderContext = {
             data: {
-                model: { id: 'claude-3-5-sonnet-20241022' },
+                model: { id: 'codex-3-5-sonnet-20241022' },
                 context_window: {
                     context_window_size: 200000,
                     used_percentage: 50
@@ -156,7 +156,7 @@ describe('ContextPercentageWidget', () => {
 
     describe('Older models with 200k context window', () => {
         it('should calculate percentage using 200k denominator for older Sonnet 3.5', () => {
-            const result = render('claude-3-5-sonnet-20241022', 42000);
+            const result = render('codex-3-5-sonnet-20241022', 42000);
             expect(result).toBe('Ctx Used: 21.0%');
         });
 
@@ -166,7 +166,7 @@ describe('ContextPercentageWidget', () => {
         });
 
         it('should calculate percentage using 200k denominator for unknown model', () => {
-            const result = render('claude-unknown-model', 42000);
+            const result = render('codex-unknown-model', 42000);
             expect(result).toBe('Ctx Used: 21.0%');
         });
     });

@@ -208,22 +208,22 @@ describe('git-remote utils', () => {
 
     describe('getRemoteInfo', () => {
         it('returns remote info for valid remote', () => {
-            mockExecFileSync.mockReturnValue('https://github.com/hangie/ccstatusline.git\n');
+            mockExecFileSync.mockReturnValue('https://github.com/hangie/codexstatusline.git\n');
             const context: RenderContext = { data: { cwd: '/tmp/repo' } };
 
             const result = getRemoteInfo('origin', context);
 
             expect(result).toEqual({
                 name: 'origin',
-                url: 'https://github.com/hangie/ccstatusline.git',
+                url: 'https://github.com/hangie/codexstatusline.git',
                 host: 'github.com',
                 owner: 'hangie',
-                repo: 'ccstatusline'
+                repo: 'codexstatusline'
             });
         });
 
         it('passes remote name as a literal git argument', () => {
-            mockExecFileSync.mockReturnValue('https://github.com/hangie/ccstatusline.git\n');
+            mockExecFileSync.mockReturnValue('https://github.com/hangie/codexstatusline.git\n');
             const remoteName = 'foo$(touch /tmp/pwn)';
 
             getRemoteInfo(remoteName, {});
@@ -262,14 +262,14 @@ describe('git-remote utils', () => {
             mockExecFileSync.mockImplementationOnce(() => { throw new Error('No such remote'); });
             mockExecFileSync.mockReturnValueOnce('hangie/feature/new-git-and-worktree-widgets\n');
             mockExecFileSync.mockReturnValueOnce('origin\nhangie\n');
-            mockExecFileSync.mockReturnValueOnce('https://github.com/hangie/ccstatusline.git\n');
+            mockExecFileSync.mockReturnValueOnce('https://github.com/hangie/codexstatusline.git\n');
 
             expect(getUpstreamRemoteInfo({})).toEqual({
                 name: 'hangie',
-                url: 'https://github.com/hangie/ccstatusline.git',
+                url: 'https://github.com/hangie/codexstatusline.git',
                 host: 'github.com',
                 owner: 'hangie',
-                repo: 'ccstatusline'
+                repo: 'codexstatusline'
             });
         });
 
@@ -299,8 +299,8 @@ describe('git-remote utils', () => {
 
     describe('getForkStatus', () => {
         it('detects fork when origin and upstream differ', () => {
-            mockExecFileSync.mockReturnValueOnce('https://github.com/hangie/ccstatusline.git\n');
-            mockExecFileSync.mockReturnValueOnce('https://github.com/sirmalloc/ccstatusline.git\n');
+            mockExecFileSync.mockReturnValueOnce('https://github.com/hangie/codexstatusline.git\n');
+            mockExecFileSync.mockReturnValueOnce('https://github.com/sirmalloc/codexstatusline.git\n');
 
             const result = getForkStatus({});
 

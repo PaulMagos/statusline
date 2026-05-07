@@ -10,7 +10,7 @@ import {
     vi
 } from 'vitest';
 
-import * as claudeSettings from '../claude-settings';
+import * as codexSettings from '../codex-settings';
 import {
     getUsageToken,
     parseMacKeychainCredentialCandidates
@@ -22,11 +22,11 @@ vi.mock('child_process', () => ({
     spawnSync: vi.fn()
 }));
 
-const CREDENTIALS_FILE = '/fake/claude/.credentials.json';
+const CREDENTIALS_FILE = '/fake/codex/.credentials.json';
 const mockedExecFileSync = execFileSync as unknown as Mock;
 
 function makeTokenPayload(token: string): string {
-    return JSON.stringify({ claudeAiOauth: { accessToken: token } });
+    return JSON.stringify({ codexAiOauth: { accessToken: token } });
 }
 
 function encodeAsciiAsHex(value: string): string {
@@ -80,28 +80,28 @@ function mockCredentialsFile(payload?: string): void {
 describe('parseMacKeychainCredentialCandidates', () => {
     it('returns hashed macOS credential candidates sorted newest-first and excludes the exact service', () => {
         const dump = [
-            makeKeychainBlock('Claude Code-credentials', { quoted: '20240101010101Z' }),
-            makeKeychainBlock('Claude Code-credentials-old', { quoted: '20240201010101Z' }),
-            makeKeychainBlock('Claude Code-credentials-new', { quoted: '20240301010101Z' })
+            makeKeychainBlock('Codex-credentials', { quoted: '20240101010101Z' }),
+            makeKeychainBlock('Codex-credentials-old', { quoted: '20240201010101Z' }),
+            makeKeychainBlock('Codex-credentials-new', { quoted: '20240301010101Z' })
         ].join('\n');
 
         expect(parseMacKeychainCredentialCandidates(dump)).toEqual([
-            'Claude Code-credentials-new',
-            'Claude Code-credentials-old'
+            'Codex-credentials-new',
+            'Codex-credentials-old'
         ]);
     });
 
     it('uses discovered order when modified times are unavailable and parses hex-only timestamps when present', () => {
         const dump = [
-            makeKeychainBlock('Claude Code-credentials-first'),
-            makeKeychainBlock('Claude Code-credentials-second', { raw: encodeAsciiAsHex('20240401010101Z\0') }),
-            makeKeychainBlock('Claude Code-credentials-third')
+            makeKeychainBlock('Codex-credentials-first'),
+            makeKeychainBlock('Codex-credentials-second', { raw: encodeAsciiAsHex('20240401010101Z\0') }),
+            makeKeychainBlock('Codex-credentials-third')
         ].join('\n');
 
         expect(parseMacKeychainCredentialCandidates(dump)).toEqual([
-            'Claude Code-credentials-second',
-            'Claude Code-credentials-first',
-            'Claude Code-credentials-third'
+            'Codex-credentials-second',
+            'Codex-credentials-first',
+            'Codex-credentials-third'
         ]);
     });
 });
@@ -109,7 +109,7 @@ describe('parseMacKeychainCredentialCandidates', () => {
 describe('getUsageToken', () => {
     beforeEach(() => {
         vi.restoreAllMocks();
-        vi.spyOn(claudeSettings, 'getClaudeConfigDir').mockReturnValue('/fake/claude');
+        vi.spyOn(codexSettings, 'getCodexConfigDir').mockReturnValue('/fake/codex');
         mockedExecFileSync.mockReset();
     });
 
@@ -122,7 +122,7 @@ describe('getUsageToken', () => {
         vi.spyOn(process, 'platform', 'get').mockReturnValue('darwin');
         mockCredentialsFile();
         mockedExecFileSync.mockImplementation((command: string, args?: string[]) => {
-            if (command === 'security' && args?.[0] === 'find-generic-password' && args[2] === 'Claude Code-credentials') {
+            if (command === 'security' && args?.[0] === 'find-generic-password' && args[2] === 'Codex-credentials') {
                 return makeTokenPayload('exact-token');
             }
 
@@ -132,15 +132,15 @@ describe('getUsageToken', () => {
         expect(getUsageToken()).toBe('exact-token');
         expect(getUsageToken()).toBe('exact-token');
         expect(getSecurityCallLog()).toEqual([
-            'find-generic-password -s Claude Code-credentials -w',
-            'find-generic-password -s Claude Code-credentials -w'
+            'find-generic-password -s Codex-credentials -w',
+            'find-generic-password -s Codex-credentials -w'
         ]);
     });
 
     it('tries the newest hashed macOS keychain candidate after an exact miss', () => {
         const dump = [
-            makeKeychainBlock('Claude Code-credentials-old', { quoted: '20240201010101Z' }),
-            makeKeychainBlock('Claude Code-credentials-new', { quoted: '20240301010101Z' })
+            makeKeychainBlock('Codex-credentials-old', { quoted: '20240201010101Z' }),
+            makeKeychainBlock('Codex-credentials-new', { quoted: '20240301010101Z' })
         ].join('\n');
 
         vi.spyOn(process, 'platform', 'get').mockReturnValue('darwin');
@@ -150,7 +150,7 @@ describe('getUsageToken', () => {
                 throw new Error(`Unexpected security args: ${args?.join(' ')}`);
             }
 
-            if (args[0] === 'find-generic-password' && args[2] === 'Claude Code-credentials') {
+            if (args[0] === 'find-generic-password' && args[2] === 'Codex-credentials') {
                 throw new Error('missing exact credential');
             }
 
@@ -158,7 +158,7 @@ describe('getUsageToken', () => {
                 return dump;
             }
 
-            if (args[0] === 'find-generic-password' && args[2] === 'Claude Code-credentials-new') {
+            if (args[0] === 'find-generic-password' && args[2] === 'Codex-credentials-new') {
                 return makeTokenPayload('hashed-token');
             }
 
@@ -168,17 +168,17 @@ describe('getUsageToken', () => {
         expect(getUsageToken()).toBe('hashed-token');
         expect(getUsageToken()).toBe('hashed-token');
         expect(getSecurityCallLog()).toEqual([
-            'find-generic-password -s Claude Code-credentials -w',
+            'find-generic-password -s Codex-credentials -w',
             'dump-keychain',
-            'find-generic-password -s Claude Code-credentials-new -w',
-            'find-generic-password -s Claude Code-credentials -w',
+            'find-generic-password -s Codex-credentials-new -w',
+            'find-generic-password -s Codex-credentials -w',
             'dump-keychain',
-            'find-generic-password -s Claude Code-credentials-new -w'
+            'find-generic-password -s Codex-credentials-new -w'
         ]);
     });
 
-    it('falls back to ~/.claude/.credentials.json on macOS when keychain lookups miss or parse invalid data', () => {
-        const dump = makeKeychainBlock('Claude Code-credentials-hashed', { quoted: '20240301010101Z' });
+    it('falls back to ~/.codex/.credentials.json on macOS when keychain lookups miss or parse invalid data', () => {
+        const dump = makeKeychainBlock('Codex-credentials-hashed', { quoted: '20240301010101Z' });
 
         vi.spyOn(process, 'platform', 'get').mockReturnValue('darwin');
         mockCredentialsFile(makeTokenPayload('file-token'));
@@ -187,7 +187,7 @@ describe('getUsageToken', () => {
                 throw new Error(`Unexpected security args: ${args?.join(' ')}`);
             }
 
-            if (args[0] === 'find-generic-password' && args[2] === 'Claude Code-credentials') {
+            if (args[0] === 'find-generic-password' && args[2] === 'Codex-credentials') {
                 throw new Error('missing exact credential');
             }
 
@@ -195,7 +195,7 @@ describe('getUsageToken', () => {
                 return dump;
             }
 
-            if (args[0] === 'find-generic-password' && args[2] === 'Claude Code-credentials-hashed') {
+            if (args[0] === 'find-generic-password' && args[2] === 'Codex-credentials-hashed') {
                 return 'not-json';
             }
 
@@ -205,12 +205,12 @@ describe('getUsageToken', () => {
         expect(getUsageToken()).toBe('file-token');
         expect(getUsageToken()).toBe('file-token');
         expect(getSecurityCallLog()).toEqual([
-            'find-generic-password -s Claude Code-credentials -w',
+            'find-generic-password -s Codex-credentials -w',
             'dump-keychain',
-            'find-generic-password -s Claude Code-credentials-hashed -w',
-            'find-generic-password -s Claude Code-credentials -w',
+            'find-generic-password -s Codex-credentials-hashed -w',
+            'find-generic-password -s Codex-credentials -w',
             'dump-keychain',
-            'find-generic-password -s Claude Code-credentials-hashed -w'
+            'find-generic-password -s Codex-credentials-hashed -w'
         ]);
     });
 

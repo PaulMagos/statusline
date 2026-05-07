@@ -61,7 +61,7 @@ describe('ContextPercentageUsableWidget', () => {
         };
         const context: RenderContext = {
             data: {
-                model: { id: 'claude-sonnet-4-5-20250929[1m]' },
+                model: { id: 'codex-sonnet-4-5-20250929[1m]' },
                 context_window: {
                     current_usage: {
                         input_tokens: 40000,
@@ -91,7 +91,7 @@ describe('ContextPercentageUsableWidget', () => {
         };
         const context: RenderContext = {
             data: {
-                model: { id: 'claude-sonnet-4-6' },
+                model: { id: 'codex-sonnet-4-6' },
                 context_window: { context_window_size: 1000000 }
             },
             tokenMetrics: {
@@ -108,17 +108,17 @@ describe('ContextPercentageUsableWidget', () => {
 
     describe('Sonnet 4.5 with 800k usable tokens', () => {
         it('should calculate percentage using 800k denominator for Sonnet 4.5 with [1m] suffix', () => {
-            const result = render('claude-sonnet-4-5-20250929[1m]', 42000);
+            const result = render('codex-sonnet-4-5-20250929[1m]', 42000);
             expect(result).toBe('Ctx(u) Used: 5.3%');
         });
 
         it('should calculate percentage using 800k denominator for Sonnet 4.5 (raw value) with [1m] suffix', () => {
-            const result = render('claude-sonnet-4-5-20250929[1m]', 42000, true);
+            const result = render('codex-sonnet-4-5-20250929[1m]', 42000, true);
             expect(result).toBe('5.3%');
         });
 
         it('should treat [1M] suffix case-insensitively in fallback mode', () => {
-            const result = render('claude-sonnet-4-5-20250929[1M]', 42000);
+            const result = render('codex-sonnet-4-5-20250929[1M]', 42000);
             expect(result).toBe('Ctx(u) Used: 5.3%');
         });
 
@@ -135,7 +135,7 @@ describe('ContextPercentageUsableWidget', () => {
 
     describe('Older models with 160k usable tokens', () => {
         it('should calculate percentage using 160k denominator for older Sonnet 3.5', () => {
-            const result = render('claude-3-5-sonnet-20241022', 42000);
+            const result = render('codex-3-5-sonnet-20241022', 42000);
             expect(result).toBe('Ctx(u) Used: 26.3%');
         });
 
@@ -145,7 +145,7 @@ describe('ContextPercentageUsableWidget', () => {
         });
 
         it('should calculate percentage using 160k denominator for unknown model', () => {
-            const result = render('claude-unknown-model', 42000);
+            const result = render('codex-unknown-model', 42000);
             expect(result).toBe('Ctx(u) Used: 26.3%');
         });
     });

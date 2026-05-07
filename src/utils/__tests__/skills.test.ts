@@ -25,7 +25,7 @@ function writeSkillsLog(sessionId: string, lines: string[]): void {
 
 describe('skills metrics', () => {
     beforeEach(() => {
-        testHomeDir = fs.mkdtempSync(path.join(os.tmpdir(), 'ccstatusline-home-'));
+        testHomeDir = fs.mkdtempSync(path.join(os.tmpdir(), 'codexstatusline-home-'));
         vi.spyOn(os, 'homedir').mockReturnValue(testHomeDir);
     });
 
@@ -36,9 +36,9 @@ describe('skills metrics', () => {
         }
     });
 
-    it('uses ~/.cache/ccstatusline/skills path for skill logs', () => {
+    it('uses ~/.cache/codexstatusline/skills path for skill logs', () => {
         expect(getSkillsFilePath('session-1')).toBe(
-            path.join(testHomeDir, '.cache', 'ccstatusline', 'skills', 'skills-session-1.jsonl')
+            path.join(testHomeDir, '.cache', 'codexstatusline', 'skills', 'skills-session-1.jsonl')
         );
     });
 

@@ -207,7 +207,7 @@ async function renderMultipleLines(data: StatusJSON) {
                 // Replace all spaces with non-breaking spaces to prevent VSCode trimming
                 let outputLine = line.replace(/ /g, '\u00A0');
 
-                // Add reset code at the beginning to override Claude Code's dim setting
+                // Add reset code at the beginning to override Codex's dim setting
                 outputLine = '\x1b[0m' + outputLine;
                 console.log(outputLine);
 

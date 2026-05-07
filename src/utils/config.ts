@@ -20,7 +20,7 @@ const readFile = fs.promises.readFile;
 const writeFile = fs.promises.writeFile;
 const mkdir = fs.promises.mkdir;
 
-const DEFAULT_SETTINGS_PATH = path.join(os.homedir(), '.config', 'ccstatusline', 'settings.json');
+const DEFAULT_SETTINGS_PATH = path.join(os.homedir(), '.config', 'codexstatusline', 'settings.json');
 
 let settingsPath = DEFAULT_SETTINGS_PATH;
 
@@ -162,10 +162,4 @@ export async function saveSettings(settings: Settings): Promise<void> {
     };
 
     await writeSettingsJson(settingsWithVersion, paths);
-
-    // Sync widget hooks to Claude settings
-    try {
-        const { syncWidgetHooks } = await import('./hooks');
-        await syncWidgetHooks(settings);
-    } catch { /* ignore hook sync failures */ }
 }

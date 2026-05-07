@@ -129,7 +129,7 @@ export const TerminalWidthMenu: React.FC<TerminalWidthMenuProps> = ({
         <Box flexDirection='column'>
             <Text bold>Terminal Width</Text>
             <Text color='white'>These settings affect where long lines are truncated, and where right-alignment occurs when using flex separators</Text>
-            <Text dimColor wrap='wrap'>Claude code does not currently provide an available width variable for the statusline and features like IDE integration, auto-compaction notices, etc all cause the statusline to wrap if we do not truncate it</Text>
+            <Text dimColor wrap='wrap'>Codex code does not currently provide an available width variable for the statusline and features like IDE integration, auto-compaction notices, etc all cause the statusline to wrap if we do not truncate it</Text>
 
             {editingThreshold ? (
                 <Box marginTop={1} flexDirection='column'>

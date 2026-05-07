@@ -50,7 +50,7 @@ const DEFAULT_GIT_REVIEW_CACHE_DEPS: GitReviewCacheDeps = {
 };
 
 function getCacheDir(deps: GitReviewCacheDeps): string {
-    return path.join(deps.getHomedir(), '.cache', 'ccstatusline');
+    return path.join(deps.getHomedir(), '.cache', 'codexstatusline');
 }
 
 function getGitReviewCacheDir(deps: GitReviewCacheDeps): string {

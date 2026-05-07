@@ -30,26 +30,26 @@ function makeUsageLine(timestamp: Date): string {
 }
 
 describe('jsonl block metrics integration', () => {
-    let tempClaudeDir: string;
-    let originalClaudeConfigDir: string | undefined;
+    let tempCodexDir: string;
+    let originalCodexConfigDir: string | undefined;
 
     beforeEach(() => {
-        tempClaudeDir = fs.mkdtempSync(path.join(os.tmpdir(), 'ccstatusline-jsonl-blocks-'));
-        originalClaudeConfigDir = process.env.CLAUDE_CONFIG_DIR;
-        process.env.CLAUDE_CONFIG_DIR = tempClaudeDir;
+        tempCodexDir = fs.mkdtempSync(path.join(os.tmpdir(), 'codexstatusline-jsonl-blocks-'));
+        originalCodexConfigDir = process.env.CLAUDE_CONFIG_DIR;
+        process.env.CLAUDE_CONFIG_DIR = tempCodexDir;
     });
 
     afterEach(() => {
-        if (originalClaudeConfigDir === undefined) {
+        if (originalCodexConfigDir === undefined) {
             delete process.env.CLAUDE_CONFIG_DIR;
         } else {
-            process.env.CLAUDE_CONFIG_DIR = originalClaudeConfigDir;
+            process.env.CLAUDE_CONFIG_DIR = originalCodexConfigDir;
         }
-        fs.rmSync(tempClaudeDir, { recursive: true, force: true });
+        fs.rmSync(tempCodexDir, { recursive: true, force: true });
     });
 
     it('returns the current block start for recent activity after an older session gap', () => {
-        const projectsDir = path.join(tempClaudeDir, 'projects', 'project-a');
+        const projectsDir = path.join(tempCodexDir, 'projects', 'project-a');
         fs.mkdirSync(projectsDir, { recursive: true });
         const transcriptPath = path.join(projectsDir, 'session.jsonl');
 
@@ -72,7 +72,7 @@ describe('jsonl block metrics integration', () => {
     });
 
     it('returns null when the most recent activity is older than the session window', () => {
-        const projectsDir = path.join(tempClaudeDir, 'projects', 'project-a');
+        const projectsDir = path.join(tempCodexDir, 'projects', 'project-a');
         fs.mkdirSync(projectsDir, { recursive: true });
         const transcriptPath = path.join(projectsDir, 'stale-session.jsonl');
 

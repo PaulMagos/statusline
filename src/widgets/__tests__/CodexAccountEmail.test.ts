@@ -15,7 +15,7 @@ import type {
     WidgetItem
 } from '../../types';
 import { DEFAULT_SETTINGS } from '../../types/Settings';
-import { ClaudeAccountEmailWidget } from '../ClaudeAccountEmail';
+import { CodexAccountEmailWidget } from '../CodexAccountEmail';
 
 const ORIGINAL_HOME = process.env.HOME;
 const ORIGINAL_CLAUDE_CONFIG_DIR = process.env.CLAUDE_CONFIG_DIR;
@@ -31,21 +31,21 @@ function render(options: {
         isPreview = false
     } = options;
 
-    const widget = new ClaudeAccountEmailWidget();
+    const widget = new CodexAccountEmailWidget();
     const context: RenderContext = { isPreview };
     const item: WidgetItem = {
-        id: 'claude-account-email',
-        type: 'claude-account-email',
+        id: 'codex-account-email',
+        type: 'codex-account-email',
         rawValue
     };
 
     return widget.render(item, context, DEFAULT_SETTINGS);
 }
 
-describe('ClaudeAccountEmailWidget', () => {
+describe('CodexAccountEmailWidget', () => {
     beforeEach(() => {
         vi.restoreAllMocks();
-        tempHomeDir = fs.mkdtempSync(path.join(os.tmpdir(), 'ccstatusline-claude-account-email-'));
+        tempHomeDir = fs.mkdtempSync(path.join(os.tmpdir(), 'codexstatusline-codex-account-email-'));
     });
 
     afterEach(() => {
@@ -74,13 +74,13 @@ describe('ClaudeAccountEmailWidget', () => {
         expect(render({ isPreview: true, rawValue: true })).toBe('you@example.com');
     });
 
-    it('reads the Claude account email from the default homedir when HOME is unset', () => {
+    it('reads the Codex account email from the default homedir when HOME is unset', () => {
         delete process.env.HOME;
         delete process.env.CLAUDE_CONFIG_DIR;
         vi.spyOn(os, 'homedir').mockReturnValue(tempHomeDir);
 
-        const claudeJsonPath = path.join(tempHomeDir, '.claude.json');
-        fs.writeFileSync(claudeJsonPath, JSON.stringify({ oauthAccount: { emailAddress: 'user@example.com' } }), 'utf-8');
+        const codexJsonPath = path.join(tempHomeDir, '.codex.json');
+        fs.writeFileSync(codexJsonPath, JSON.stringify({ oauthAccount: { emailAddress: 'user@example.com' } }), 'utf-8');
 
         expect(render()).toBe('Account: user@example.com');
     });
@@ -90,28 +90,28 @@ describe('ClaudeAccountEmailWidget', () => {
         delete process.env.CLAUDE_CONFIG_DIR;
         vi.spyOn(os, 'homedir').mockReturnValue(tempHomeDir);
 
-        const claudeJsonPath = path.join(tempHomeDir, '.claude.json');
-        fs.writeFileSync(claudeJsonPath, JSON.stringify({ oauthAccount: { emailAddress: 'user@example.com' } }), 'utf-8');
+        const codexJsonPath = path.join(tempHomeDir, '.codex.json');
+        fs.writeFileSync(codexJsonPath, JSON.stringify({ oauthAccount: { emailAddress: 'user@example.com' } }), 'utf-8');
 
         expect(render({ rawValue: true })).toBe('user@example.com');
     });
 
-    it('returns null when the Claude account email is unavailable', () => {
-        process.env.CLAUDE_CONFIG_DIR = path.join(tempHomeDir, '.claude');
+    it('returns null when the Codex account email is unavailable', () => {
+        process.env.CLAUDE_CONFIG_DIR = path.join(tempHomeDir, '.codex');
 
         expect(render()).toBeNull();
     });
 
-    it('reads from $CLAUDE_CONFIG_DIR/.claude.json when CLAUDE_CONFIG_DIR is set', () => {
-        // Regression test for #317: the widget previously read $HOME/.claude.json
+    it('reads from $CLAUDE_CONFIG_DIR/.codex.json when CLAUDE_CONFIG_DIR is set', () => {
+        // Regression test for #317: the widget previously read $HOME/.codex.json
         // regardless of CLAUDE_CONFIG_DIR, causing all profiles to show the same email.
-        const customConfigDir = path.join(tempHomeDir, '.claude-work');
+        const customConfigDir = path.join(tempHomeDir, '.codex-work');
         fs.mkdirSync(customConfigDir, { recursive: true });
         process.env.CLAUDE_CONFIG_DIR = customConfigDir;
 
-        const claudeJsonPath = path.join(customConfigDir, '.claude.json');
+        const codexJsonPath = path.join(customConfigDir, '.codex.json');
         fs.writeFileSync(
-            claudeJsonPath,
+            codexJsonPath,
             JSON.stringify({ oauthAccount: { emailAddress: 'work@example.com' } }),
             'utf-8'
         );
@@ -119,17 +119,17 @@ describe('ClaudeAccountEmailWidget', () => {
         expect(render()).toBe('Account: work@example.com');
     });
 
-    it('does not fall back to $HOME/.claude.json when CLAUDE_CONFIG_DIR points to a dir without one', () => {
+    it('does not fall back to $HOME/.codex.json when CLAUDE_CONFIG_DIR points to a dir without one', () => {
         // Verifies the fix for #317 doesn't silently leak the wrong profile's
-        // email when the configured profile has no .claude.json yet.
-        const customConfigDir = path.join(tempHomeDir, '.claude-empty');
+        // email when the configured profile has no .codex.json yet.
+        const customConfigDir = path.join(tempHomeDir, '.codex-empty');
         fs.mkdirSync(customConfigDir, { recursive: true });
         process.env.CLAUDE_CONFIG_DIR = customConfigDir;
 
-        // Plant a .claude.json in $HOME — the widget must NOT pick this up
+        // Plant a .codex.json in $HOME — the widget must NOT pick this up
         vi.spyOn(os, 'homedir').mockReturnValue(tempHomeDir);
         fs.writeFileSync(
-            path.join(tempHomeDir, '.claude.json'),
+            path.join(tempHomeDir, '.codex.json'),
             JSON.stringify({ oauthAccount: { emailAddress: 'leak@example.com' } }),
             'utf-8'
         );
@@ -141,9 +141,9 @@ describe('ClaudeAccountEmailWidget', () => {
         delete process.env.CLAUDE_CONFIG_DIR;
         vi.spyOn(os, 'homedir').mockReturnValue(tempHomeDir);
 
-        const claudeJsonPath = path.join(tempHomeDir, '.claude.json');
+        const codexJsonPath = path.join(tempHomeDir, '.codex.json');
         fs.writeFileSync(
-            claudeJsonPath,
+            codexJsonPath,
             JSON.stringify({ oauthAccount: { emailAddress: 12345 } }),
             'utf-8'
         );

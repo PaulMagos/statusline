@@ -15,7 +15,7 @@ describe('calculateContextPercentage', () => {
         it('should prefer context_window used_percentage over token metrics', () => {
             const context: RenderContext = {
                 data: {
-                    model: { id: 'claude-3-5-sonnet-20241022' },
+                    model: { id: 'codex-3-5-sonnet-20241022' },
                     context_window: {
                         context_window_size: 200000,
                         used_percentage: 12.5
@@ -37,7 +37,7 @@ describe('calculateContextPercentage', () => {
         it('should infer the window size for raw percentage metrics when size is missing', () => {
             const context: RenderContext = {
                 data: {
-                    model: { id: 'claude-sonnet-4-5-20250929[1m]' },
+                    model: { id: 'codex-sonnet-4-5-20250929[1m]' },
                     context_window: { used_percentage: 4.2 }
                 }
             };
@@ -91,7 +91,7 @@ describe('calculateContextPercentage', () => {
         it('should use context_window_size as denominator when falling back to token metrics', () => {
             const context: RenderContext = {
                 data: {
-                    model: { id: 'claude-3-5-sonnet-20241022' },
+                    model: { id: 'codex-3-5-sonnet-20241022' },
                     context_window: { context_window_size: 1000000 }
                 },
                 tokenMetrics: {
@@ -110,7 +110,7 @@ describe('calculateContextPercentage', () => {
         it('should return token-metric fallback metrics with the denominator used', () => {
             const context: RenderContext = {
                 data: {
-                    model: { id: 'claude-3-5-sonnet-20241022' },
+                    model: { id: 'codex-3-5-sonnet-20241022' },
                     context_window: { context_window_size: 1000000 }
                 },
                 tokenMetrics: {
@@ -132,7 +132,7 @@ describe('calculateContextPercentage', () => {
     describe('Sonnet 4.5 with 1M context window', () => {
         it('should calculate percentage using 1M denominator with [1m] suffix', () => {
             const context: RenderContext = {
-                data: { model: { id: 'claude-sonnet-4-5-20250929[1m]' } },
+                data: { model: { id: 'codex-sonnet-4-5-20250929[1m]' } },
                 tokenMetrics: {
                     inputTokens: 0,
                     outputTokens: 0,
@@ -148,7 +148,7 @@ describe('calculateContextPercentage', () => {
 
         it('should cap at 100% with [1m] suffix', () => {
             const context: RenderContext = {
-                data: { model: { id: 'claude-sonnet-4-5-20250929[1m]' } },
+                data: { model: { id: 'codex-sonnet-4-5-20250929[1m]' } },
                 tokenMetrics: {
                     inputTokens: 0,
                     outputTokens: 0,
@@ -198,7 +198,7 @@ describe('calculateContextPercentage', () => {
             const context: RenderContext = {
                 data: {
                     model: {
-                        id: 'claude-opus-4-6',
+                        id: 'codex-opus-4-6',
                         display_name: 'Opus 4.6 (1M context)'
                     }
                 },
@@ -219,7 +219,7 @@ describe('calculateContextPercentage', () => {
     describe('Older models with 200k context window', () => {
         it('should calculate percentage using 200k denominator', () => {
             const context: RenderContext = {
-                data: { model: { id: 'claude-3-5-sonnet-20241022' } },
+                data: { model: { id: 'codex-3-5-sonnet-20241022' } },
                 tokenMetrics: {
                     inputTokens: 0,
                     outputTokens: 0,
@@ -234,7 +234,7 @@ describe('calculateContextPercentage', () => {
         });
 
         it('should return 0 when no token metrics', () => {
-            const context: RenderContext = { data: { model: { id: 'claude-3-5-sonnet-20241022' } } };
+            const context: RenderContext = { data: { model: { id: 'codex-3-5-sonnet-20241022' } } };
 
             const percentage = calculateContextPercentage(context);
             expect(percentage).toBe(0);
