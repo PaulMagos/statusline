@@ -6,9 +6,9 @@ Run the TUI:
 bun run start
 ```
 
-Edit the status-line widgets, then choose **Configure Codex status line** from the main menu.
+Choose native-compatible status-line items, then select **Configure Codex status line** from the main menu.
 
-The tool writes a native Codex status line to:
+The tool writes a plain native Codex footer configuration to:
 
 ```text
 ~/.codex/config.toml
@@ -23,7 +23,7 @@ status_line = ["model-with-reasoning", "current-dir", "git-branch", "context-use
 
 ## Supported Items
 
-Codex only supports its built-in item ids. This tool maps compatible widgets to those ids:
+Codex only supports its built-in item ids. It does not render this tool's local preview, colors, labels, separators, or powerline styling. This tool maps compatible widgets to these plain native ids:
 
 - `model`
 - `model-with-reasoning`

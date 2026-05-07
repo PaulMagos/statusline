@@ -48,7 +48,7 @@ export const InstallMenu: React.FC<InstallMenuProps> = ({
 
     return (
         <Box flexDirection='column'>
-            <Text bold>Configure Codex status line</Text>
+            <Text bold>Configure Codex native footer</Text>
 
             {existingStatusLine && (
                 <Box marginBottom={1}>
@@ -61,7 +61,13 @@ export const InstallMenu: React.FC<InstallMenuProps> = ({
             )}
 
             <Box>
-                <Text dimColor>Map supported widgets to Codex built-in status line items.</Text>
+                <Text dimColor>Map supported widgets to plain Codex built-in footer items.</Text>
+            </Box>
+
+            <Box marginTop={1}>
+                <Text dimColor>
+                    Codex will not render preview colors, labels, separators, or powerline styling.
+                </Text>
             </Box>
 
             <List
